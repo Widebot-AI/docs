@@ -1,0 +1,61 @@
+# Cursor Rules for this repository
+
+## Repository purpose
+- This repo contains the documentation site content in MDX for AQL/Widebot. Keep changes lightweight, readable, and consistent.
+
+## Scope of changes
+- Prefer content and structure edits to `.mdx` files.
+- Add images to `images/` or `public/images/` and reference them with relative paths.
+- When adding a new page, also update `sidebar.mdx` and any relevant index pages.
+
+## Writing style (MDX)
+- Use clear, concise language. Optimize for skimmability.
+- Headings: start at `##` for top-level section headings within a page; use `###` for subsections.
+- Use bold for key terms and important sentences sparingly.
+- Use bullet lists for steps and checklists; keep items short.
+- Code blocks must include language tags (e.g., ```bash, ```json, ```javascript).
+- When referencing repo files or identifiers, wrap with backticks (e.g., `api-reference/introduction.mdx`).
+- Links: prefer relative links within the repo; avoid bare URLs; use descriptive link text.
+- Images: include meaningful alt text, use light/dark variants where provided.
+
+## File conventions
+- Page files: `.mdx` in the repo root or subfolders (e.g., `essentials/`, `api-reference/`).
+- Use kebab-case for new filenames (e.g., `api-credentials.mdx`).
+- Store reusable MDX snippets in `snippets/`.
+- OpenAPI sources are `openapi_aql.yaml`, `openapi_widebot.yaml` and `api-reference/openapi.json`—keep these in sync when documenting API changes.
+
+## Structural rules
+- Do not reformat unrelated lines. Preserve existing indentation and spacing.
+- Avoid introducing new top-level navigation sections without updating `sidebar.mdx`.
+- If adding/removing endpoints, mirror the structure under `api-reference/endpoint/` and update cross-links.
+- Keep images under version control; do not link to external CDNs.
+
+## Assistant editing guidelines
+- Make targeted edits; avoid broad rewrites.
+- Before creating new sections/pages, search the repo to reuse or extend existing content.
+- When adding examples, prefer minimal, copy-pastable snippets. Validate JSON/YAML formatting.
+- Respect the existing tone and terminology used across the docs.
+
+## Quality checklist before finishing an edit
+- Headings hierarchy is correct (`##` then `###`).
+- All links are relative and valid.
+- Images exist at the referenced paths with alt text.
+- Code fences have correct language tags and render as expected.
+- Sidebar updated for any new or renamed pages.
+- If API behavior changed, corresponding OpenAPI files and `api-reference` pages updated.
+
+## PR/commit guidance
+- Commit messages: imperative mood, concise summary of what changed (e.g., "Add billing page troubleshooting section").
+- Group related doc changes into a single commit when possible.
+
+## Out of scope
+- Do not add build tooling or runtime code here unless required for docs rendering.
+- Do not introduce external content fetching without explicit approval.
+
+## Safeguards
+- Maintain neutral, helpful tone; avoid sensitive or speculative claims.
+- Do not paste secrets or private tokens in examples; use placeholders (e.g., `YOUR_API_KEY`).
+
+## Examples
+- New page flow: add `new-topic.mdx` → update `sidebar.mdx` → add images to `images/` if needed → cross-link from `index.mdx` or related pages.
+- New endpoint: mirror `api-reference/endpoint/` patterns (`get.mdx`, `create.mdx`, etc.), include request/response examples, and update OpenAPI files if applicable.

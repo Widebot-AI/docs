@@ -1,0 +1,162 @@
+/* ===========================
+   AQL Docs – Global Styles
+   Place this file at repo root as: style.css
+   =========================== */
+
+/* --- Brand tokens --- */
+:root{
+    /* brand */
+    --aql-purple: #7209B7;
+    --aql-purple-weak: rgba(114, 9, 183, .35);
+  
+    /* buttons */
+    --aql-btn-inactive:#666668; /* not active */
+    --aql-btn-active:#7209B7;   /* active */
+  
+    /* neutrals */
+    --aql-border-light: rgba(0,0,0,.08);
+    --aql-card-bg-light: rgba(255,255,255,.6);
+  
+    --aql-border-dark: rgba(255,255,255,.12);
+    --aql-card-bg-dark: rgba(255,255,255,.03);
+  
+    /* spacing scale */
+    --aql-gap-2: .5rem;
+    --aql-gap-3: .75rem;
+    --aql-gap-4: 1rem;
+    --aql-gap-5: 1.25rem;
+  
+    /* radius */
+    --aql-radius: .75rem;
+    --aql-radius-pill: 999px;
+  }
+  
+  /* ===========================
+     Buttons
+     =========================== */
+  
+  /* Base AQL button */
+  .aql-btn{
+    display:inline-flex; align-items:center; gap:var(--aql-gap-2);
+    padding:.6rem 1rem; border-radius:.6rem;
+    background:var(--aql-btn-inactive); color:#fff;
+    font-weight:600; border:1px solid transparent;
+    text-decoration:none;
+    transition:background .2s ease, box-shadow .2s ease, transform .02s, filter .2s;
+  }
+  .aql-btn:hover{ filter:brightness(1.05); }
+  .aql-btn:active{ transform:translateY(1px); }
+  .aql-btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(114,9,183,.3); }
+  
+  /* Active state (use either .is-active OR aria-pressed="true") */
+  .aql-btn.is-active,
+  .aql-btn[aria-pressed="true"]{
+    background:var(--aql-btn-active);
+  }
+  
+  /* Outlined variant */
+  .aql-btn--outline{
+    background:transparent; color:var(--aql-btn-active);
+    border:1px solid var(--aql-btn-active);
+  }
+  .aql-btn--outline.is-active,
+  .aql-btn--outline[aria-pressed="true"]{
+    background:var(--aql-btn-active); color:#fff;
+  }
+  
+  /* Small / Large helpers */
+  .aql-btn--sm{ padding:.45rem .8rem; font-size:.925rem; }
+  .aql-btn--lg{ padding:.75rem 1.15rem; font-size:1.025rem; }
+  
+  /* Icon-only */
+  .aql-btn--icon{
+    padding:.5rem; width:2.25rem; height:2.25rem;
+    justify-content:center;
+  }
+  
+  /* ===========================
+     Landing page layout
+     (used by index.mdx)
+     =========================== */
+  
+  .aql-landing{ display:grid; gap:var(--aql-gap-5); }
+  
+  .aql-hero h1{ margin:0 0 .5rem; }
+  .aql-hero p{ font-size:1.05rem; margin:.25rem 0 0; }
+  
+  .aql-cta-row{
+    display:flex; gap:var(--aql-gap-3); flex-wrap:wrap; margin-top:1rem;
+  }
+  
+  /* ===========================
+     Feature grid + cards
+     =========================== */
+  
+  .feature-grid{
+    display:grid; gap:var(--aql-gap-4); margin-top:.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  @media (min-width: 720px){
+    .feature-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .feature-card{
+    display:flex; flex-direction:column; gap:.25rem;
+    padding:1rem;
+    border:1px solid var(--aql-border-light);
+    border-radius:var(--aql-radius);
+    text-decoration:none;
+    background: var(--aql-card-bg-light);
+    transition:border-color .2s ease, transform .06s ease;
+  }
+  [data-theme="dark"] .feature-card{
+    border-color: var(--aql-border-dark);
+    background: var(--aql-card-bg-dark);
+  }
+  .feature-card:hover{
+    border-color: var(--aql-purple-weak);
+  }
+  .feature-card:active{ transform:translateY(1px); }
+  
+  .feature-icon{ font-size:1.25rem; }
+  .feature-link{ margin-top:.25rem; font-weight:600; color:inherit; }
+  
+  /* ===========================
+     Badges / Pills (optional)
+     =========================== */
+  
+  .aql-pill{
+    display:inline-flex; align-items:center; gap:.35rem;
+    padding:.25rem .6rem;
+    border-radius:var(--aql-radius-pill);
+    font-size:.85rem; font-weight:600;
+    background: rgba(114,9,183,.09);
+    color: var(--aql-purple);
+    border:1px solid var(--aql-purple-weak);
+  }
+  [data-theme="dark"] .aql-pill{
+    background: rgba(114,9,183,.14);
+    border-color: var(--aql-purple-weak);
+  }
+  
+  /* ===========================
+     Utility helpers
+     =========================== */
+  
+  .aql-muted{ opacity:.75; }
+  .aql-center{ display:flex; align-items:center; justify-content:center; }
+  .aql-kpis{
+    display:grid; gap:var(--aql-gap-4);
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  @media (min-width: 800px){
+    .aql-kpis{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+  }
+  .aql-kpi{
+    padding:.85rem; border-radius:var(--aql-radius);
+    border:1px solid var(--aql-border-light);
+  }
+  [data-theme="dark"] .aql-kpi{ border-color:var(--aql-border-dark); }
+  
+  /* emphasize links on hover slightly with brand tint */
+  a:hover{ text-decoration: none; }
+  
