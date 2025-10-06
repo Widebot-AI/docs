@@ -1,30 +1,306 @@
 openapi: 3.0.3
 info:
-  title: Widebot AQL/RAG/STT/TTS API
+  title: AQL AI Developer APIs
   version: 1.0.0
-  description: >
-    Official endpoints for AQL Chat, RAG Answers, Speech-to-Text, and Text-to-Speech,
-    derived from your Postman collection.
+  description: |
+    AQL AI Developer APIs provide access to AQL Chat, RAG Answer, Speech-to-Text, and Text-to-Speech capabilities. These AI-powered APIs enable you to build intelligent applications with natural language understanding, voice processing, and knowledge retrieval. AQL technology excels particularly in Arabic language and dialect processing.
 
+    ## Prerequisites and Setup
+
+    ### Prerequisites
+
+    Before using these APIs, ensure you have:
+
+    1. **Active Widebot Account** with API access enabled
+    2. **API Key** from your account settings
+    3. **Bot ID** from your API Page
+    4. **API Quotas** configured for your use case
+    5. **Indexed Documents** (for RAG API) via AI Knowledge Feature
+
+    ### Authentication
+
+    All APIs use header-based authentication:
+    - `x-user-auth`: Your API key
+    - `x-bot`: Your bot ID with quota limits
+
+    ### Base URL
+
+    All endpoints use: `https://gateway.widebot.net`
+
+    ## Common Error Codes
+
+    ### Error Response Structure
+
+    ```json
+    {
+        "StatusCode": 401,
+        "Response": "Invalid authentication token",
+        "Consumption": "0/1000"
+    }
+    ```
+
+    ### Error Codes Reference
+
+    | Code | Error | Description | Solution |
+    |------|-------|-------------|----------|
+    | 401 | Unauthorized | Invalid x-user-auth API key | Check your API key from account settings |
+    | 402 | Payment Required | API exceeds consumption quota | Increase quota or wait for reset |
+    | 429 | Too Many Requests | Concurrent limit exceeded | Reduce request frequency |
+    | 400 | Bad Request | Invalid parameters or missing quota | Verify request parameters |
+    | 500 | Internal Error | Unexpected server error | Contact support if persistent |
+
+    ## Common Response Structure
+
+    ### Standard Response Format
+
+    All APIs return the same structure:
+
+    ```json
+    {
+        "StatusCode": 200,
+        "Response": { },
+        "Consumption": "used/total"
+    }
+    ```
+
+    **Fields Explained:**
+    - `StatusCode`: HTTP status code
+    - `Response`: API-specific response data
+    - `Consumption`: Current usage vs quota limit
+
+    ## Quick Start Guide
+
+    ### 1. Environment Setup
+
+    Create environment variables:
+    - `auth_token`: Your authentication token
+    - `bot_id`: Your bot ID
+
+    ### 2. Test Connection
+
+    Start with AQL Chat API for basic testing:
+
+    ```json
+    {
+        "Message": "مرحباً، اختبار الاتصال"
+    }
+    ```
+
+    ### 3. Explore APIs in Order
+
+    1. **AQL Chat** - Language model interactions
+    2. **RAG Answer** - Document-based Q&A (requires indexed docs)
+    3. **Speech to Text** - Audio transcription
+    4. **Text to Speech** - Voice generation
+
+    ## Usage Monitoring
+
+    ### Consumption Tracking
+
+    Monitor usage in each response:
+    - Track token consumption for text APIs
+    - Monitor character usage for TTS
+    - Watch audio duration for STT
+
+    ### Best Practices
+
+    - Set up monitoring alerts at 80% quota usage
+    - Use streaming APIs for real-time applications
+    - Cache results when appropriate
+    - Optimize parameters for cost efficiency
+
+    ## Arabic Language Features
+
+    ### Why Choose Widebot for Arabic?
+
+    - **Industry-leading dialect recognition** (Egyptian, Gulf, Levantine, Maghrebi)
+    - **Cultural context understanding** in language generation
+    - **Natural pronunciation** in text-to-speech
+    - **Colloquial expression handling** in all APIs
+
+    ### Arabic-Specific Tips
+
+    - Use `ar-eg` language code for best results
+    - Select appropriate Arabic voices for your region
+    - Leverage dialect-specific features in STT
+    - Test with regional content for optimization
+
+    ## Integration Examples
+
+    ### Common Integration Patterns
+
+    1. **Voice Assistant**: STT → AQL Chat → TTS
+    2. **Document Q&A**: RAG Answer → TTS (for audio responses)
+    3. **Content Creation**: AQL Chat → TTS (for audio content)
+    4. **Transcription Service**: STT → AQL Chat (for cleanup/formatting)
+
+    ### Multi-API Workflows
+
+    Combine APIs for powerful applications:
+    - Process audio input → Generate AI response → Convert to speech
+    - Answer from documents → Enhance with AI → Deliver as audio
 servers:
   - url: https://gateway.widebot.net
+    description: Production server
 
 tags:
-  - name: AQL
-  - name: RAG
-  - name: STT
-  - name: TTS
+  - name: AQL Chat
+    description: |
+      AQL Chat API provides access to Widebot's AQL language model for natural language understanding and generation, with exceptional capabilities in Arabic and its various dialects.
 
+      ### How It Works
+
+      1. You send a message or query to the API
+      2. Optionally configure generation parameters like temperature and token limits
+      3. The AQL model processes your input and generates a contextually relevant response
+      4. Response includes the generated text along with token usage metrics
+
+      ### Arabic Language Excellence
+
+      Our AQL model excels at understanding and generating Arabic content, including various regional dialects and colloquial expressions. The model demonstrates superior comprehension of cultural context, idiomatic expressions, and dialectical nuances across the Arab world.
+
+      ### API Versions
+
+      - **V1 API**: Standard text-based conversations
+      - **V2 API**: Multimodal support (text + images)
+      - **Streaming API**: Real-time response generation
+
+      ### Consumption Calculation
+
+      Consumption is calculated based on the total number of tokens processed (input + output). A token is approximately 4 characters in English or 1-2 characters in Arabic.
+
+      ### PromptStyle Options
+
+      - 0: Base (standard responses)
+      - 1: Expert (technical/formal)
+      - 2: Conversational (casual, dialogic)
+      - 3: Structured (organized with sections)
+      - 4: Concise (brief, to-the-point)
+      - 5: Detailed (comprehensive explanations)
+
+      ### Configuration Parameters
+
+      - **Temperature**: Controls randomness (0.0-1.0)
+      - **MaxTokens**: Maximum response length
+      - **TopProbability**: Nucleus sampling probability
+      - **RepetitionPenalty**: Reduces word repetition
+
+      ### Usage Tips
+
+      - For factual queries, use lower temperature (0.1-0.3)
+      - For creative content, use higher temperature (0.7-1.0)
+      - Monitor token consumption to optimize costs
+      - Use V2 API for image analysis capabilities
+      - Leverage streaming for real-time applications
+  - name: RAG Knowledge
+    description: |
+      Manage knowledge units for RAG: get an upload URL, add knowledge, list entries, fetch by ID, update, and delete. Complete these steps before calling answering APIs.
+
+      ### Typical Flow
+      1. Get an upload URL and upload the file
+      2. Add Knowledge (register the uploaded file or a URL)
+      3. Retrieve/Update/Delete as needed
+  - name: RAG Answering
+    description: |
+      Answer questions using previously indexed knowledge with citations. Supports standard and streaming responses.
+      
+      ### How Answering Works
+      1. Submit a question and specify which indexes to search
+      2. Retrieve relevant passages from your knowledge
+      3. Generate a grounded answer including source citations
+  - name: Speech to Text
+    description: |
+      Speech-to-Text API converts spoken language in audio files into written text, with exceptional performance for Arabic language and dialect recognition.
+
+      ### How It Works
+
+      1. You upload an audio file or provide an audio URL
+      2. Specify a session ID to track the conversion
+      3. Optionally set language and audio parameters
+      4. The API processes the audio and returns the transcribed text
+
+      ### Arabic Excellence
+
+      Our Speech to Text API demonstrates industry-leading accuracy for Arabic dialects and accents, including Egyptian, Gulf, Levantine, and Maghrebi variations. The model effectively handles colloquial expressions, regional pronunciations, and mixed dialect speech.
+
+      ### Supported Languages
+
+      Arabic (MSA), Arabic (Egyptian), English, Turkish, Ukrainian, Urdu, Swedish, Spanish, Russian, Korean, Italian, Japanese, Indonesian, Hindi, Hebrew, French, Greek, German, Mandarin Chinese, Asturian
+
+      ### Key Features
+
+      - **Real-time Transcription**: Streaming API for live processing
+      - **Translation Capabilities**: Convert speech to different languages
+      - **Noise Filtering**: Advanced audio preprocessing
+      - **Multiple Dialect Recognition**: Specialized Arabic dialect handling
+      - **Session-based Processing**: Track related transcriptions
+
+      ### Usage Tips
+
+      - Use clear audio with minimal background noise
+      - Set SetDefaultSampleRate to true for optimal accuracy
+      - For long audio files, consider breaking into smaller chunks
+      - Use appropriate language settings for best results
+      - Leverage streaming API for real-time applications
+      - Choose WAV format for highest transcription quality
+  - name: Text to Speech
+    description: |
+      Text-to-Speech API converts text into natural-sounding audio in multiple languages and voices, optimized for Arabic and its dialects with exceptional quality.
+
+      ### How It Works
+
+      1. Send text content along with language and speaker preferences
+      2. The API processes your text using neural voice synthesis
+      3. The response includes a URL to access the generated audio file (typically available for 24 hours)
+
+      ### Arabic Excellence
+
+      The API excels in Arabic, handling nuances, pronunciation, and dialectical variations, producing speech that accurately reflects regional intonation patterns.
+
+      ### Supported Languages
+
+      Arabic (MSA), Arabic (Egyptian), Arabic (Saudi), English, Turkish, Ukrainian, Urdu, Swedish, Spanish, Russian, Korean, Italian, Japanese, Indonesian, Hindi, Hebrew, French, Greek, German, Mandarin Chinese, Asturian
+
+      ### Available Speakers
+
+      #### Arabic Male
+      - **Hesham** - **HIGHLY RECOMMENDED** for MSA and Egyptian dialect
+      - **Rawy** - **HIGHLY RECOMMENDED** for Saudi dialect
+      - Other options: Mohamed, Adel, Hytham, Masry, Adam, Hesham-formal (slower rate)
+
+      #### Arabic Female
+      - Lina, Mona, Alice, Customer_Service, Esraa
+      - **Hala** (Recommended for Saudi dialect)
+
+      ### Limitations
+
+      1. **Lack of Punctuation in Long Paragraphs** - Without commas or periods, the model may add wrong pauses
+      2. **Spelling Sensitivity** - Arabic spelling must be accurate
+      3. **Voice Cloning Inconsistency** - Quality depends on the reference file
+      4. **Speaker—Language Mismatch** - Using Arabic text with English speaker produces unnatural output
+
+      ### Usage Tips
+
+      - Keep LanguageCode and Speaker consistent
+      - Use Temperature to adjust speech variation
+      - Add punctuation for natural prosody
+      - Check quota before long texts
+      - Cache audio files if reusing them
+      - Use Streaming API for real-time audio
+      - **For Saudi dialect, use Rawy (male) or Hala (female)**
+      - **For MSA/Egyptian dialect, use Hesham (male)**
 components:
   securitySchemes:
     UserAuth:
       type: apiKey
       in: header
       name: x-user-auth
+      description: Your API key from account settings
     BotId:
       type: apiKey
       in: header
       name: x-bot
+      description: Your bot ID from account settings
 
   schemas:
     AQLChatV1Request:
@@ -32,71 +308,240 @@ components:
       properties:
         Message:
           type: string
+          description: The message to send to the AQL model
           example: "ما هي عاصمة مصر وما أهم معالمها السياحية؟"
         ChatHistory:
           type: array
-          description: Optional previous messages (when chatting with history).
+          description: Optional previous messages for context-aware conversations
           items:
             type: object
             properties:
-              Role: { type: string, enum: [User, Assistant] }
-              Content: { type: string }
+              Role: 
+                type: string
+                enum: [User, Assistant]
+                description: The role of the message sender
+              Content: 
+                type: string
+                description: The message content
         Config:
           type: object
+          description: Configuration parameters for text generation
           properties:
-            Temperature: { type: number, format: float, example: 0.7 }
-            MaxTokens: { type: integer, example: 1024 }
-            TopProbability: { type: number, format: float, example: 0.9 }
-            RepetitionPenalty: { type: number, format: float, example: 0.1 }
+            Temperature: 
+              type: number
+              format: float
+              minimum: 0.0
+              maximum: 1.0
+              example: 0.7
+              description: Controls randomness in generation (0.0-1.0)
+            MaxTokens: 
+              type: integer
+              minimum: 1
+              maximum: 4096
+              example: 1024
+              description: Maximum number of tokens to generate
+            TopProbability: 
+              type: number
+              format: float
+              minimum: 0.0
+              maximum: 1.0
+              example: 0.9
+              description: Nucleus sampling probability
+            RepetitionPenalty: 
+              type: number
+              format: float
+              minimum: 0.0
+              maximum: 2.0
+              example: 0.1
+              description: Penalty for repeating words
         PromptStyle:
           type: integer
+          minimum: 0
+          maximum: 5
           example: 3
+          description: |
+            Style of response generation:
+            - 0: Base (standard responses)
+            - 1: Expert (technical/formal)
+            - 2: Conversational (casual, dialogic)
+            - 3: Structured (organized with sections)
+            - 4: Concise (brief, to-the-point)
+            - 5: Detailed (comprehensive explanations)
 
     AQLChatV2MultimodalRequest:
       type: object
       properties:
         Content:
           type: object
+          description: Multimodal content including images
           properties:
             Type:
               type: integer
-              description: Modality type (e.g., 1 = image + text).
+              description: Content modality type (1 = image + text)
               example: 1
             ImageUrl:
               type: string
               format: uri
+              description: URL of the image to analyze
               example: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg"
         Config:
           type: object
+          description: Configuration parameters for generation
           properties:
-            Temperature: { type: number, example: 0.7 }
-            MaxTokens: { type: integer, example: 1024 }
+            Temperature: 
+              type: number
+              minimum: 0.0
+              maximum: 1.0
+              example: 0.7
+              description: Controls randomness in generation
+            MaxTokens: 
+              type: integer
+              minimum: 1
+              maximum: 4096
+              example: 1024
+              description: Maximum number of tokens to generate
         PromptStyle:
           type: integer
+          minimum: 0
+          maximum: 5
           example: 2
+          description: Style of response generation
 
     RAGAnswerRequest:
       type: object
       required: [Question]
       properties:
-        Question: { type: string, example: "ما هو الاسم الكامل لمحمد صلاح؟" }
+        Question: 
+          type: string
+          description: The question to answer using indexed documents
+          example: "ما هو الاسم الكامل لمحمد صلاح؟"
         IndexNames:
           type: array
-          items: { type: string }
+          description: Names of document indexes to search
+          items: 
+            type: string
           example: ["Mohamed Salah"]
-        Limit: { type: integer, example: 10 }
-        MaxLimit: { type: integer, example: 10 }
-        Temperature: { type: number, example: 0.1 }
-        MaxOutputTokens: { type: integer, example: 1024 }
-        UpdateGlobal: { type: boolean, example: false }
-        IsStream: { type: boolean, example: false }
+        Limit: 
+          type: integer
+          minimum: 1
+          maximum: 50
+          example: 10
+          description: Number of document chunks to retrieve
+        MaxLimit: 
+          type: integer
+          minimum: 1
+          maximum: 50
+          example: 10
+          description: Maximum number of documents to process
+        Temperature: 
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.1
+          description: Controls creativity in answer generation
+        MaxOutputTokens: 
+          type: integer
+          minimum: 1
+          maximum: 4096
+          example: 1024
+          description: Maximum tokens in generated answer
+        UpdateGlobal: 
+          type: boolean
+          example: false
+          description: Whether to update global context
+        IsStream: 
+          type: boolean
+          example: false
+          description: Whether to stream the response
 
     RAGStreamRequest:
       allOf:
         - $ref: '#/components/schemas/RAGAnswerRequest'
         - type: object
           properties:
-            IsStream: { type: boolean, example: true }
+            IsStream: 
+              type: boolean
+              example: true
+              description: Must be true for streaming responses
+
+    AIKnowledgeRequest:
+      type: object
+      required: [title, KnowledgeSource, SourceContent]
+      properties:
+        title:
+          type: string
+          description: Title for the knowledge entry
+          example: "API Documentation"
+        description:
+          type: string
+          description: Description of the knowledge content
+          example: "API documentation for testing"
+        KnowledgeSource:
+          type: integer
+          description: Source type for the knowledge
+          enum: [0, 1]
+          example: 1
+        SourceContent:
+          oneOf:
+            - type: array
+              description: Array of URLs (when KnowledgeSource = 1)
+              items:
+                type: string
+                format: uri
+              example: ["https://en.wikipedia.org/wiki/API"]
+            - type: array
+              description: Array of file objects (when KnowledgeSource = 0)
+              items:
+                type: object
+                properties:
+                  FileName:
+                    type: string
+                    description: Name of the uploaded file
+                  FileUrl:
+                    type: string
+                    format: uri
+                    description: URL of the uploaded file
+                  FilePath:
+                    type: string
+                    description: Path to the file in storage
+                  FileSize:
+                    type: integer
+                    description: Size of the file in bytes
+
+    AIKnowledgeUpdateRequest:
+      type: object
+      required: [id, title, KnowledgeSource]
+      properties:
+        id:
+          type: integer
+          description: ID of the knowledge entry to update
+          example: 1092
+        title:
+          type: string
+          description: Updated title for the knowledge entry
+          example: "Updated Title"
+        description:
+          type: string
+          description: Updated description
+          example: "Updated description"
+        KnowledgeSource:
+          type: integer
+          description: Source type (0 for file, 1 for URL)
+          enum: [0, 1]
+          example: 1
+        AIKnowledgeSources:
+          type: array
+          description: Updated source information
+          items:
+            type: object
+            properties:
+              content:
+                type: string
+                description: JSON string containing file information
+              id:
+                type: integer
+                description: Source ID
 
     STTStandardForm:
       type: object
@@ -104,11 +549,24 @@ components:
         Record:
           type: string
           format: binary
-          description: Audio file to transcribe.
-        SessionId: { type: string, example: "test-session-1234" }
-        SetDefaultSampleRate: { type: string, enum: ["true","false"], example: "true" }
-        TargetLanguage: { type: string, example: "ar-eg" }
-        MaxRecordLengthInSeconds: { type: string, example: "180" }
+          description: Audio file to transcribe
+        SessionId: 
+          type: string
+          description: Unique session identifier for tracking
+          example: "test-session-1234"
+        SetDefaultSampleRate: 
+          type: string
+          enum: ["true","false"]
+          example: "true"
+          description: Whether to use default sample rate optimization
+        TargetLanguage: 
+          type: string
+          example: "ar-eg"
+          description: Language code for transcription output
+        MaxRecordLengthInSeconds: 
+          type: string
+          example: "180"
+          description: Maximum audio duration to process
 
     STTStreamForm:
       type: object
@@ -116,45 +574,149 @@ components:
         Record:
           type: string
           format: binary
-        SessionId: { type: string, example: "streaming-session-1234" }
-        SetDefaultSampleRate: { type: string, enum: ["true","false"], example: "true" }
-        SourceLanguage: { type: string, example: "ar-eg" }
-        TargetLanguage: { type: string, example: "ar-eg" }
-        TaskType: { type: string, example: "Transcript" }
-        OutputFormat: { type: string, example: "Text" }
+          description: Audio file for streaming transcription
+        SessionId: 
+          type: string
+          description: Unique session identifier
+          example: "streaming-session-1234"
+        SetDefaultSampleRate: 
+          type: string
+          enum: ["true","false"]
+          example: "true"
+          description: Whether to use default sample rate
+        SourceLanguage: 
+          type: string
+          example: "ar-eg"
+          description: Language of the input audio
+        TargetLanguage: 
+          type: string
+          example: "ar-eg"
+          description: Language for transcription output
+        TaskType: 
+          type: string
+          example: "Transcript"
+          description: Type of processing (Transcript/Translate)
+        OutputFormat: 
+          type: string
+          example: "Text"
+          description: Format of the output
 
     TTSStandardRequest:
       type: object
-      required: [text, lang_code, speaker]
+      required: [TextMessage, LanguageCode, speaker]
       properties:
-        text: { type: string, example: "وش علومك اليوم؟" }
-        lang_code: { type: string, example: "ar-sa" }
-        speaker: { type: string, example: "Rawy" }
-        temperature: { type: number, example: 0.5 }
-        output_sr: { type: integer, example: 24000 }
-        session_id: { type: string, example: "example-session-001" }
+        TextMessage:
+          type: string
+          description: Text to convert to speech
+          example: "وش علومك اليوم؟"
+        LanguageCode:
+          type: string
+          description: Language code for speech synthesis
+          example: "ar-sa"
+        speaker:
+          type: string
+          description: Voice to use for speech generation
+          example: "Rawy"
+        temperature:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.5
+          description: Controls variation in speech generation
+        output_sr:
+          type: integer
+          example: 24000
+          description: Output sample rate in Hz
+        session_id:
+          type: string
+          description: Optional session identifier
+          example: "example-session-001"
 
     TTSStreamRequest:
       type: object
       required: [TextMessage, LanguageCode, Speaker]
       properties:
-        TextMessage: { type: string, example: "مرحباً! هذا بث صوتي لحظي." }
-        LanguageCode: { type: string, example: "ar" }
-        Speaker: { type: string, example: "Hesham" }
-        Temperature: { type: number, example: 0.8 }
-        OutputSampleRate: { type: integer, example: 24000 }
-        StreamChunkSize: { type: integer, example: 300 }
+        TextMessage: 
+          type: string
+          description: Text to convert to speech
+          example: "مرحباً! هذا بث صوتي لحظي."
+        LanguageCode: 
+          type: string
+          description: Language code for speech
+          example: "ar"
+        Speaker: 
+          type: string
+          description: Voice to use for generation
+          example: "Hesham"
+        Temperature: 
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.8
+          description: Controls speech variation
+        OutputSampleRate: 
+          type: integer
+          example: 24000
+          description: Audio sample rate
+        StreamChunkSize: 
+          type: integer
+          maximum: 400
+          example: 300
+          description: Size of audio chunks for streaming
+
+    StandardResponse:
+      type: object
+      properties:
+        StatusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        Response:
+          type: object
+          description: API-specific response data
+        Consumption:
+          type: string
+          description: Current usage vs quota limit
+          example: "147/10000000"
+
+    ErrorResponse:
+      type: object
+      properties:
+        StatusCode:
+          type: integer
+          description: HTTP error status code
+          example: 401
+        Response:
+          type: string
+          description: Error message
+          example: "Invalid authentication token"
+        Consumption:
+          type: string
+          description: Current usage vs quota limit
+          example: "0/1000"
 
 security:
   - UserAuth: []
-  - BotId: []
+    BotId: []
 
 paths:
   /api/v1/AQL/chat/completions:
     post:
-      tags: [AQL]
+      tags: ["AQL Chat"]
       summary: Chat Completion (V1) + History
-      description: Standard chat completion. Supports a single Message or a ChatHistory array.
+      description: |
+        Standard chat completion API that supports both single messages and conversation history for context-aware responses.
+        
+        **Key Features:**
+        - Single message or conversation history support
+        - Configurable generation parameters
+        - Arabic language optimization
+        - Token usage tracking
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview from the client and the API's JSON body (StandardResponse envelope).
+      operationId: chatCompletionV1
       requestBody:
         required: true
         content:
@@ -163,125 +725,664 @@ paths:
               $ref: '#/components/schemas/AQLChatV1Request'
             examples:
               singleMessage:
+                summary: Single message example
+                description: Basic chat completion with a single message
                 value:
                   Message: "اكتب لي مقالاً قصيراً عن أهمية الذكاء الاصطناعي في التعليم"
-                  Config: { Temperature: 0.8, MaxTokens: 2048, TopProbability: 0.9, RepetitionPenalty: 0.1 }
+                  Config: 
+                    Temperature: 0.8
+                    MaxTokens: 2048
+                    TopProbability: 0.9
+                    RepetitionPenalty: 0.1
                   PromptStyle: 5
               withHistory:
+                summary: Chat with conversation history
+                description: Context-aware conversation with message history
                 value:
                   ChatHistory:
-                    - { Role: "User", Content: "ما هي عاصمة مصر؟" }
-                    - { Role: "Assistant", Content: "القاهرة هي العاصمة." }
-                    - { Role: "User", Content: "وما أبرز معالمها؟" }
-                  Config: { Temperature: 0.7, MaxTokens: 1024 }
+                    - Role: "User"
+                      Content: "ما هي عاصمة مصر؟"
+                    - Role: "Assistant"
+                      Content: "القاهرة هي العاصمة."
+                    - Role: "User"
+                      Content: "وما أبرز معالمها؟"
+                  Config: 
+                    Temperature: 0.7
+                    MaxTokens: 1024
                   PromptStyle: 3
       responses:
         '200':
-          description: OK
+          description: Successful response with generated text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: object
+                    properties:
+                      text:
+                        type: string
+                        description: Generated response text
+                        example: "القاهرة هي العاصمة الرسمية لجمهورية مصر العربية..."
+                      metadata:
+                        type: object
+                        properties:
+                          input_tokens:
+                            type: integer
+                            description: Number of input tokens processed
+                          generated_tokens:
+                            type: integer
+                            description: Number of tokens generated
+                          total_tokens:
+                            type: integer
+                            description: Total tokens used
+                          generation_time:
+                            type: number
+                            description: Time taken for generation in seconds
+                  Consumption:
+                    type: string
+                    description: Usage tracking
+                    example: "147/10000000"
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests - rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
-  /api/v2/AQL/chat/completions:
-    post:
-      tags: [AQL]
-      summary: Chat Completion (V2 - Multimodal)
-      description: Multimodal chat completion (e.g., image + text).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AQLChatV2MultimodalRequest'
-            example:
-              Content:
-                Type: 1
-                ImageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg"
-              Config: { Temperature: 0.7, MaxTokens: 1024 }
-              PromptStyle: 2
-      responses:
-        '200':
-          description: OK
+  # /api/v2/AQL/chat/completions:
+  #   post:
+  #     tags: ["AQL Chat"]
+  #     summary: Chat Completion (V2 - Multimodal)
+  #     description: |
+  #       Advanced chat completion API with multimodal support for processing both text and images.
+  #       
+  #       **Key Features:**
+  #       - Image analysis capabilities
+  #       - Text + image processing
+  #       - Multimodal understanding
+  #       - Enhanced AI responses
+  #
+  #       Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview from the client and the API's JSON body (StandardResponse envelope).
+  #     operationId: chatCompletionV2Multimodal
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/AQLChatV2MultimodalRequest'
+  #           examples:
+  #             imageAnalysis:
+  #               summary: Image analysis example
+  #               description: Analyze an image and generate description
+  #               value:
+  #                 Content:
+  #                   Type: 1
+  #                   ImageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg"
+  #                 Config: 
+  #                   Temperature: 0.7
+  #                   MaxTokens: 1024
+  #                 PromptStyle: 2
+  #     responses:
+  #       '200':
+  #         description: Successful multimodal response
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StandardResponse'
 
   /api/v1/AQL/stream/chat/completions:
     post:
-      tags: [AQL]
+      tags: ["AQL Chat"]
       summary: Chat Completion (Streaming)
-      description: Streaming chat completion via server-sent events or chunked responses.
+      description: |
+        Streaming chat completion API that provides real-time response generation via server-sent events.
+        
+        **Key Features:**
+        - Real-time response streaming
+        - Server-sent events
+        - Lower latency for long responses
+        - Progressive content delivery
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview from the client and the API's JSON body (streamed chunks).
+      operationId: chatCompletionStreaming
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AQLChatV1Request'
-            example:
-              Message: "اكتب لي مقالاً قصيراً عن أهمية الذكاء الاصطناعي في التعليم"
-              Config: { Temperature: 0.8, MaxTokens: 2048 }
-              PromptStyle: 5
+            examples:
+              streamingRequest:
+                summary: Streaming chat example
+                description: Request for streaming response generation
+                value:
+                  Message: "اكتب لي مقالاً قصيراً عن أهمية الذكاء الاصطناعي في التعليم"
+                  Config: 
+                    Temperature: 0.8
+                    MaxTokens: 2048
+                  PromptStyle: 5
       responses:
         '200':
-          description: OK
+          description: Streaming response via server-sent events
           content:
-            text/event-stream: {}
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+              examples:
+                streamingResponse:
+                  summary: Example streaming response
+                  value: |
+                    data: {"chunk": "# أهمية الذكاء الاصطناعي في التعليم\n\n"}
+                    
+                    data: {"chunk": "يشهد قطاع التعليم تطوراً"}
+                    
+                    data: {"chunk": " مذهلاً بفضل تقنيات الذكاء الاصطناعي"}
+                    
+                    data: {"final": true, "metadata": {"total_tokens": 456}, "consumption": "456/10000000"}
 
   /api/v1/RAG/Answer:
     post:
-      tags: [RAG]
-      summary: Get RAG Answer (Standard)
+      tags: ["RAG Answering"]
+      summary: Answer Question (Standard)
+      description: |
+        Answer questions using Retrieval-Augmented Generation from your indexed documents with source citations.
+        
+        **Requirements:**
+        - Documents must be pre-indexed via AI Knowledge Feature
+        - Specify IndexNames to search specific document collections
+        
+        **Key Features:**
+        - Semantic document retrieval
+        - Source-backed answers
+        - Relevance scoring
+        - Multi-document synthesis
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview from the client and the API's JSON body (StandardResponse envelope).
+      operationId: ragAnswerStandard
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/RAGAnswerRequest' }
-            example:
-              Question: "ما هو الاسم الكامل لمحمد صلاح؟"
-              IndexNames: ["Mohamed Salah"]
-              Limit: 10
-              MaxLimit: 10
-              Temperature: 0.1
-              MaxOutputTokens: 1024
-              UpdateGlobal: false
-              IsStream: false
+            schema: 
+              $ref: '#/components/schemas/RAGAnswerRequest'
+            examples:
+              basicQuery:
+                summary: Basic RAG query
+                description: Simple question with document index specification
+                value:
+                  Question: "ما هو الاسم الكامل لمحمد صلاح؟"
+                  IndexNames: ["Mohamed Salah"]
+                  Limit: 10
+                  Temperature: 0.1
+                  MaxOutputTokens: 1024
+                  IsStream: false
       responses:
         '200':
-          description: OK
+          description: RAG answer with retrieved documents and sources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: object
+                    properties:
+                      answer:
+                        type: string
+                        description: Generated answer based on retrieved documents
+                        example: "محمد صلاح حامد محروس غالي"
+                      chat_history:
+                        type: array
+                        description: Conversation history if applicable
+                      retrieved_documents:
+                        type: array
+                        description: Documents used to generate the answer
+                        items:
+                          type: object
+                          properties:
+                            text:
+                              type: string
+                              description: Content of the retrieved document chunk
+                            score:
+                              type: number
+                              description: Relevance score (0-1)
+                            metadata:
+                              type: object
+                              description: Document metadata
+                              properties:
+                                file_id:
+                                  type: string
+                                  description: Source document identifier
+                                Section Title:
+                                  type: string
+                                  description: Section within the document
+                  Consumption:
+                    type: string
+                    description: Usage tracking
+                    example: "3600/10000000"
 
   /api/v1/RAG/Stream/Answer:
     post:
-      tags: [RAG]
-      summary: Get RAG Answer (Streaming)
+      tags: ["RAG Answering"]
+      summary: Stream Answer
+      description: |
+        Streaming RAG answers for real-time response generation with document citations and progressive content delivery.
+        
+        **Key Features:**
+        - Real-time answer streaming
+        - Progressive document retrieval
+        - Source citations in stream
+        - Lower latency for long answers
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview from the client and the API's streaming output.
+      operationId: ragAnswerStreaming
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/RAGStreamRequest' }
-            example:
-              Question: "اشرح لي تاريخ الحضارة المصرية القديمة"
-              IndexNames: ["Ancient_Egypt", "Egyptian_History"]
-              Temperature: 0.3
-              MaxOutputTokens: 2048
-              IsStream: true
+            schema: 
+              $ref: '#/components/schemas/RAGStreamRequest'
+            examples:
+              streamingQuery:
+                summary: Streaming RAG query
+                description: Complex question requiring streaming response
+                value:
+                  Question: "اشرح لي تاريخ الحضارة المصرية القديمة"
+                  IndexNames: ["Ancient_Egypt", "Egyptian_History"]
+                  Temperature: 0.3
+                  MaxOutputTokens: 2048
+                  IsStream: true
       responses:
         '200':
-          description: OK
+          description: Streaming RAG response with progressive content and citations
           content:
-            text/event-stream: {}
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events with answer chunks and metadata
+
+  /api/AIKnowledge/all/{botId}:
+    get:
+      tags: ["RAG Knowledge"]
+      summary: List Knowledge Units
+      description: |
+        Retrieve all knowledge units for a specific bot with optional search filtering.
+        
+        **Use Cases:**
+        - List all indexed documents
+        - Search knowledge by title
+        - Manage knowledge inventory
+        - Audit indexed content
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getAllKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID to retrieve knowledge for
+          example: "12345"
+        - in: query
+          name: searchTitle
+          required: false
+          schema:
+            type: string
+          description: Optional search filter for knowledge titles
+          example: "API Documentation"
+      responses:
+        '200':
+          description: List of knowledge entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/byId/{knowledgeId}:
+    get:
+      tags: ["RAG Knowledge"]
+      summary: Get Knowledge Unit by ID
+      description: |
+        Retrieve detailed information about a specific knowledge unit by its unique identifier.
+        
+        **Returns:**
+        - Knowledge metadata
+        - Source information
+        - Indexing status
+        - File details
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getKnowledgeById
+      parameters:
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the knowledge entry
+          example: "1092"
+      responses:
+        '200':
+          description: Knowledge entry details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/{botId}:
+    post:
+      tags: ["RAG Knowledge"]
+      summary: Register Knowledge Unit
+      description: |
+        Register a new knowledge unit (file or URL) to your bot's knowledge base for indexing.
+        
+        **Supported Sources:**
+        - **URLs (KnowledgeSource = 1)**: Web pages, documentation, articles
+        - **Files (KnowledgeSource = 0)**: PDF, DOCX, TXT, and other document formats
+        
+        **Process:**
+        1. For files: First upload using the upload URL endpoint
+        2. Create a knowledge unit with file details or URL
+        3. System automatically indexes the content
+        4. Content becomes available for RAG queries
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: addKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID to add knowledge to
+          example: "12345"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIKnowledgeRequest'
+            examples:
+              urlSource:
+                summary: URL-based knowledge
+                description: Add knowledge from a web URL
+                value:
+                  title: "API Documentation"
+                  description: "Wikipedia API documentation"
+                  KnowledgeSource: 1
+                  SourceContent: ["https://en.wikipedia.org/wiki/API"]
+              fileSource:
+                summary: File-based knowledge
+                description: Add knowledge from an uploaded file
+                value:
+                  title: "Document Upload"
+                  description: "Uploaded document"
+                  KnowledgeSource: 0
+                  SourceContent:
+                    - FileName: "doc.pdf"
+                      FileUrl: "https://s3.amazonaws.com/bucket/doc.pdf"
+                      FilePath: "PlatformAttachments/LIVE/12345/doc.pdf"
+                      FileSize: 12345
+      responses:
+        '200':
+          description: Knowledge entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/{botId}/{knowledgeId}:
+    put:
+      tags: ["RAG Knowledge"]
+      summary: Update Knowledge Unit
+      description: |
+        Update an existing knowledge unit's metadata or replace associated files.
+        
+        **Update Options:**
+        - **Metadata Only**: Update title and description
+        - **Replace Content**: Update source files or URLs
+        - **Complete Replacement**: Change both metadata and content
+        
+        **Note:** Updating content triggers re-indexing of the knowledge unit.
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: updateKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID
+          example: "12345"
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Knowledge entry ID to update
+          example: "1092"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIKnowledgeUpdateRequest'
+            examples:
+              metadataUpdate:
+                summary: Update metadata only
+                description: Update title and description without changing content
+                value:
+                  id: 1092
+                  title: "Updated API Documentation"
+                  description: "Updated description for API docs"
+                  KnowledgeSource: 1
+              replaceFile:
+                summary: Replace file content
+                description: Update with new file while preserving metadata
+                value:
+                  id: 1092
+                  title: "Updated Document"
+                  description: "Document with new content"
+                  KnowledgeSource: 0
+                  AIKnowledgeSources:
+                    - content: "{\"FileUrl\":\"https://cdn.example.com/new.docx\",\"FileName\":\"new.docx\",\"FilePath\":\"PlatformAttachments/LIVE/12345/new.docx\",\"FileSize\":15000}"
+                      id: 1092
+      responses:
+        '200':
+          description: Knowledge entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+    delete:
+      tags: ["RAG Knowledge"]
+      summary: Delete Knowledge Unit
+      description: |
+        Remove a knowledge unit from your bot's knowledge base.
+        
+        **Warning:** This action is irreversible and will:
+        - Remove the knowledge unit permanently
+        - Delete associated indexed content
+        - Make the content unavailable for RAG queries
+        - Not affect the original source files or URLs
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: deleteKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID
+          example: "12345"
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Knowledge entry ID to delete
+          example: "1092"
+      responses:
+        '200':
+          description: Knowledge entry deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/upload-to-s3:
+    get:
+      tags: ["RAG Knowledge"]
+      summary: Upload Knowledge Unit (upload URL)
+      description: |
+        Get an upload URL for sending the raw file of a knowledge unit. 
+        After the upload succeeds, you must call "Add Knowledge" to register the uploaded file as a knowledge unit in your bot.
+        
+        **Process:**
+        1. Call this endpoint to get an upload URL
+        2. Upload your file using the provided URL
+        3. Call "Add Knowledge" to register the uploaded file as a knowledge unit
+        
+        **Supported File Types:**
+        - PDF documents
+        - Microsoft Word (DOCX)
+        - Plain text (TXT)
+        - Rich text (RTF)
+        - And other common document formats
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getUploadUrl
+      responses:
+        '200':
+          description: Upload URL for file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: object
+                    properties:
+                      uploadUrl:
+                        type: string
+                        format: uri
+                        description: Upload URL for file
+                      fileKey:
+                        type: string
+                        description: File key identifier
+                      expiresIn:
+                        type: integer
+                        description: URL expiration time in seconds
+                  Consumption:
+                    type: string
+                    example: "0/10000000"
 
   /api/v2/AQL/SpeechToText:
     post:
-      tags: [STT]
+      tags: ["Speech to Text"]
       summary: Convert Speech to Text (Standard)
+      description: |
+        Convert audio files to text with superior Arabic dialect recognition and support for multiple languages.
+        
+        **Supported Audio Formats:**
+        - WAV (recommended for best quality)
+        - MP3 (widely supported)
+        - MP4 (audio track extraction)
+        - Other common audio formats
+        
+        **Arabic Excellence:**
+        - Industry-leading Arabic dialect recognition
+        - Support for Egyptian, Gulf, Levantine, and Maghrebi variations
+        - Colloquial expression handling
+        - Regional pronunciation accuracy
+        
+        **Consumption:** Based on audio duration in seconds
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: speechToTextStandard
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/STTStandardForm'
+            examples:
+              arabicAudio:
+                summary: Arabic audio transcription
+                description: Transcribe Arabic speech to text
+                value:
+                  SessionId: "test-session-123"
+                  SetDefaultSampleRate: "true"
+                  TargetLanguage: "ar-eg"
+                  MaxRecordLengthInSeconds: "180"
       responses:
         '200':
-          description: OK
+          description: Transcription successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: string
+                    description: Transcribed text from audio
+                    example: "مرحباً، كيف حالك اليوم؟ أتمنى أن تكون بخير."
+                  Consumption:
+                    type: string
+                    description: Audio duration consumed
+                    example: "15/1000"
 
   /api/v1/AQL/Stream/SpeechToText:
     post:
-      tags: [STT]
+      tags: ["Speech to Text"]
       summary: Convert Speech to Text (Streaming)
+      description: |
+        Real-time speech to text conversion with streaming output for live processing applications.
+        
+        **Key Features:**
+        - Real-time transcription
+        - Progressive text output
+        - Live audio processing
+        - Streaming partial results
+        
+        **Use Cases:**
+        - Live transcription services
+        - Real-time voice assistants
+        - Meeting transcription
+        - Voice note processing
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's streaming output.
+      operationId: speechToTextStreaming
       requestBody:
         required: true
         content:
@@ -290,51 +1391,185 @@ paths:
               $ref: '#/components/schemas/STTStreamForm'
       responses:
         '200':
-          description: OK
+          description: Streaming transcription with progressive results
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events with transcription progress
+              examples:
+                streamingTranscription:
+                  summary: Example streaming transcription
+                  value: |
+                    data: {"partial": "أهلا"}
+                    
+                    data: {"partial": "أهلا وسهلا"}
+                    
+                    data: {"partial": "أهلا وسهلا بكم"}
+                    
+                    data: {"final": "أهلا وسهلا بكم في تطبيقات الذكاء الاصطناعي من وايد بوت"}
+                    
+                    data: {"status": "complete", "duration": 8.5, "consumption": "8/1000"}
 
   /api/v2/AQL/TextToSpeech:
     post:
-      tags: [TTS]
+      tags: ["Text to Speech"]
       summary: Convert Text to Speech (Standard)
+      description: |
+        Convert text to high-quality speech with natural Arabic voices and multiple language support.
+        
+        **Arabic Excellence:**
+        - Natural pronunciation for Arabic dialects
+        - Regional voice variations
+        - Cultural context understanding
+        - Proper Arabic phonetics
+        
+        **Available Speakers:**
+        - **Arabic Male**: 
+          - **Hesham** - **HIGHLY RECOMMENDED** for MSA/Egyptian
+          - **Rawy** - **HIGHLY RECOMMENDED** for Saudi
+          - Other: Mohamed, Adel, Hytham
+        - **Arabic Female**: Hala (Saudi), Lina, Mona, Alice, Esraa
+        - **English**: Marcos Rudaski, Claribel Dervla
+        
+        **Consumption:** Based on character count in input text
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: textToSpeechStandard
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TTSStandardRequest'
-            example:
-              text: "وش علومك اليوم؟"
-              lang_code: "ar-sa"
-              speaker: "Rawy"
-              temperature: 0.5
-              output_sr: 24000
-              session_id: "example-session-001"
+            examples:
+              arabicText:
+                summary: Arabic text to speech
+                description: Convert Arabic text to natural speech
+                value:
+                  TextMessage: "مرحباً بكم في منصة وايد بوت للذكاء الاصطناعي"
+                  LanguageCode: "ar-sa"
+                  speaker: "Rawy"
+                  temperature: 0.5
+                  output_sr: 24000
+                  session_id: "tts-session-001"
+              englishText:
+                summary: English text to speech
+                description: Convert English text to speech
+                value:
+                  TextMessage: "Welcome to Widebot AI platform"
+                  LanguageCode: "eng"
+                  speaker: "Marcos Rudaski"
+                  temperature: 0.7
+                  output_sr: 24000
+                  session_id: "tts-session-002"
       responses:
         '200':
-          description: OK
+          description: Text to speech conversion successful
           content:
-            audio/mpeg: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "success"
+                      audio_url:
+                        type: string
+                        format: uri
+                        description: URL to download the generated audio file
+                        example: "https://cdn.widebot.net/tmp/tts/abc123xyz/output.mp3"
+                      duration_ms:
+                        type: integer
+                        description: Audio duration in milliseconds
+                        example: 1850
+                      characters:
+                        type: integer
+                        description: Number of characters processed
+                        example: 18
+                      language:
+                        type: string
+                        description: Language used for generation
+                        example: "ar-sa"
+                      speaker:
+                        type: string
+                        description: Voice used for generation
+                        example: "Rawy"
+                      output_sr:
+                        type: integer
+                        description: Output sample rate
+                        example: 24000
+                      session_id:
+                        type: string
+                        description: Session identifier
+                        example: "tts-session-001"
+                  Consumption:
+                    type: string
+                    description: Character usage tracking
+                    example: "18/15000"
 
   /api/v1/AQL/Stream/TextToSpeech:
     post:
-      tags: [TTS]
+      tags: ["Text to Speech"]
       summary: Convert Text to Speech (Streaming)
+      description: |
+        Real-time text to speech conversion with audio streaming for immediate playback.
+        
+        **Key Features:**
+        - Real-time audio generation
+        - Progressive audio chunks
+        - Lower latency for long texts
+        - Streaming audio playback
+        
+        **Use Cases:**
+        - Live voice assistants
+        - Real-time narration
+        - Interactive voice applications
+        - Immediate audio feedback
+        
+        **Audio Format:** MP3 chunks delivered via server-sent events
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's streaming output.
+      operationId: textToSpeechStreaming
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TTSStreamRequest'
-            example:
-              TextMessage: "مرحباً! هذا بث صوتي لحظي."
-              LanguageCode: "ar"
-              Speaker: "Hesham"
-              Temperature: 0.8
-              OutputSampleRate: 24000
-              StreamChunkSize: 300
+            examples:
+              streamingArabic:
+                summary: Streaming Arabic TTS
+                description: Real-time Arabic text to speech conversion
+                value:
+                  TextMessage: "مرحباً! هذا مثال على التحويل الصوتي المباشر للنص العربي"
+                  LanguageCode: "ar"
+                  Speaker: "Hesham"
+                  Temperature: 0.8
+                  OutputSampleRate: 24000
+                  StreamChunkSize: 300
       responses:
         '200':
-          description: OK
+          description: Streaming audio generation with progressive chunks
           content:
-            audio/mpeg: {}
-
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events with audio chunks
+              examples:
+                streamingAudio:
+                  summary: Example streaming audio response
+                  value: |
+                    data: {"chunk_id": 1, "audio_data": "UklGRl4AAABXQVZFZm10...", "chunk_size": 1024}
+                    
+                    data: {"chunk_id": 2, "audio_data": "VFJBVEVZRjQAAABXQVZF...", "chunk_size": 1024}
+                    
+                    data: {"chunk_id": 3, "audio_data": "ZGF0YQQ=", "chunk_size": 512}
+                    
+                    data: {"status": "complete", "total_chunks": 3, "total_duration": 4.2, "consumption": "58/15000"}

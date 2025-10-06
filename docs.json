@@ -2,10 +2,10 @@
   "name": "AQL",
   "theme": "mint",
   "colors": {
-  "primary": "#7209B7",
-  "light": "#F7FAFF",
-  "dark": "#1A1F36"
-},
+    "primary": "#7209B7",
+    "light": "#F7FAFF",
+    "dark": "#1A1F36"
+  },
   "logo": {
     "light": "/images/aql-logo-light.png",
     "dark": "/images/aql-logo-dark.png",
@@ -18,18 +18,19 @@
       {
         "tab": "User Guide",
         "groups": [
-          { "group": "Quick Start",       "icon": "rocket",      "pages": ["quickstart"] },
-          { "group": "Accounts & Access", "icon": "user",        "pages": ["accounts"] },
-          { "group": "Workspaces",        "icon": "layout-grid", "pages": ["workspaces","workspace-home","sidebar"] },
-          { "group": "AI Features",       "icon": "sparkles",    "pages": ["ai-overview","ai-knowledge","ai-assistant","aql-genai"] },
-          { "group": "Workspace Settings","icon": "settings",    "pages": ["settings","billing","team","api-credentials"] },
-          { "group": "Help",              "icon": "life-buoy",   "pages": ["troubleshooting","release-notes"] }
+          { "group": "Quick Start",        "icon": "rocket",       "pages": ["quickstart"] },
+          { "group": "Accounts & Access",  "icon": "user",         "pages": ["accounts"] },
+          { "group": "Workspaces",         "icon": "layout-grid",  "pages": ["workspaces","workspace-home","sidebar"] },
+          { "group": "AI Features",        "icon": "sparkles",     "pages": ["ai-overview","ai-knowledge","ai-assistant","aql-genai"] },
+          { "group": "Workspace Settings", "icon": "settings",     "pages": ["settings","billing","team","api-credentials"] },
+          { "group": "Support",            "icon": "life-buoy",    "pages": ["troubleshooting","release-notes"] }
         ]
       },
       {
         "tab": "AI APIs",
         "groups": [
-          { "group": "API Reference", "icon": "cpu", "openapi": "openapi_aql.yaml" }
+          { "group": "Overview",  "icon": "book", "pages": ["api-reference/introduction","api-reference/prerequisites"] },
+          { "group": "Endpoints", "icon": "cpu",  "openapi": "openapi_aql.yaml" }
         ]
       }
     ]

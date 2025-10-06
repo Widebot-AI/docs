@@ -1,33 +1,19 @@
+
+# AQL AI Developer APIs
+
+AQL provides core APIs for building applications with natural language processing, document retrieval, and voice capabilities. These APIs are designed with Arabic language support as a primary feature.
+
+1. **AQL Chat API**  
+   → Text generation and conversational AI with image analysis support.
+2. **RAG Answer API**  
+   → Query documents you've uploaded and get answers with source citations.
+3. **RAG Indexing API**  
+   → Upload files or URLs to create a searchable knowledge base.
+4. **RAG Knowledge CRUD API**  
+   → Create, read, update, and delete knowledge sources in your knowledge base.
+5. **Speech-to-Text API**  
+   → Convert audio files to text with Arabic dialect recognition.
+6. **Text-to-Speech API**  
+   → Generate audio from text using Arabic and other language voices.
+
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
----
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
-
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
-
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```

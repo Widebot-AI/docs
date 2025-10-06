@@ -308,7 +308,6 @@ icon: "key"
 
 - Find **Bot ID** and **API Key** under **Workspace Settings → API**.
 - Keep keys secret; rotate regularly.
-- Use separate keys for QC and Production.
 MDX
 
 # --- Troubleshooting ---
