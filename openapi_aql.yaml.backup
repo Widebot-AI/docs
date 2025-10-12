@@ -850,7 +850,7 @@ paths:
   /api/v1/AQL/stream/chat/completions:
     post:
       tags: ["AQL Chat"]
-      summary: Stream Chat Completion
+      summary: Chat Completion (Streaming)
       description: |
         Streaming chat completion API that provides real-time response generation via server-sent events.
         
@@ -1210,6 +1210,288 @@ paths:
               schema:
                 type: string
                 description: Server-sent events with answer chunks and metadata
+
+  /api/AIKnowledge/upload-to-s3:
+    get:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Upload Knowledge Unit
+      description: |
+        Get an upload URL for sending the raw file of a knowledge unit. 
+        After the upload succeeds, you must call "Add Knowledge" to register the uploaded file as a knowledge unit in your bot.
+        
+        **Process:**
+        1. Call this endpoint to get an upload URL
+        2. Upload your file using the provided URL
+        3. Call "Add Knowledge" to register the uploaded file as a knowledge unit
+        
+        **Supported File Types:**
+        - PDF documents
+        - Microsoft Word (DOCX)
+        - Plain text (TXT)
+        - Rich text (RTF)
+        - And other common document formats
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getUploadUrl
+      responses:
+        '200':
+          description: Upload URL for file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  StatusCode:
+                    type: integer
+                    example: 200
+                  Response:
+                    type: object
+                    properties:
+                      uploadUrl:
+                        type: string
+                        format: uri
+                        description: Upload URL for file
+                      fileKey:
+                        type: string
+                        description: File key identifier
+                      expiresIn:
+                        type: integer
+                        description: URL expiration time in seconds
+                  Consumption:
+                    type: string
+                    example: "0/10000000"
+
+  /api/AIKnowledge/{botId}:
+    post:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Register Knowledge Unit
+      description: |
+        Register a new knowledge unit (file or URL) to your bot's knowledge base for indexing.
+        
+        **Supported Sources:**
+        - **URLs (KnowledgeSource = 1)**: Web pages, documentation, articles
+        - **Files (KnowledgeSource = 0)**: PDF, DOCX, TXT, and other document formats
+        
+        **Process:**
+        1. For files: First upload using the upload URL endpoint
+        2. Create a knowledge unit with file details or URL
+        3. System automatically indexes the content
+        4. Content becomes available for RAG queries
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: addKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID to add knowledge to
+          example: "12345"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIKnowledgeRequest'
+            examples:
+              urlSource:
+                summary: URL-based knowledge
+                description: Add knowledge from a web URL
+                value:
+                  title: "API Documentation"
+                  description: "Wikipedia API documentation"
+                  KnowledgeSource: 1
+                  SourceContent: ["https://en.wikipedia.org/wiki/API"]
+              fileSource:
+                summary: File-based knowledge
+                description: Add knowledge from an uploaded file
+                value:
+                  title: "Document Upload"
+                  description: "Uploaded document"
+                  KnowledgeSource: 0
+                  SourceContent:
+                    - FileName: "doc.pdf"
+                      FileUrl: "https://s3.amazonaws.com/bucket/doc.pdf"
+                      FilePath: "PlatformAttachments/LIVE/12345/doc.pdf"
+                      FileSize: 12345
+      responses:
+        '200':
+          description: Knowledge entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/all/{botId}:
+    get:
+      tags: ["RAG Knowledge Indexing"]
+      summary: List Knowledge Units
+      description: |
+        Retrieve all knowledge units for a specific bot with optional search filtering.
+        
+        **Use Cases:**
+        - List all indexed documents
+        - Search knowledge by title
+        - Manage knowledge inventory
+        - Audit indexed content
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getAllKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID to retrieve knowledge for
+          example: "12345"
+        - in: query
+          name: searchTitle
+          required: false
+          schema:
+            type: string
+          description: Optional search filter for knowledge titles
+          example: "API Documentation"
+      responses:
+        '200':
+          description: List of knowledge entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/byId/{knowledgeId}:
+    get:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Get Knowledge Unit by ID
+      description: |
+        Retrieve detailed information about a specific knowledge unit by its unique identifier.
+        
+        **Returns:**
+        - Knowledge metadata
+        - Source information
+        - Indexing status
+        - File details
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: getKnowledgeById
+      parameters:
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the knowledge entry
+          example: "1092"
+      responses:
+        '200':
+          description: Knowledge entry details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/{botId}/{knowledgeId}:
+    put:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Update Knowledge Unit
+      description: |
+        Update an existing knowledge unit's metadata or replace associated files.
+        
+        **Update Options:**
+        - **Metadata Only**: Update title and description
+        - **Replace Content**: Update source files or URLs
+        - **Complete Replacement**: Change both metadata and content
+        
+        **Note:** Updating content triggers re-indexing of the knowledge unit.
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: updateKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID
+          example: "12345"
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Knowledge entry ID to update
+          example: "1092"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIKnowledgeUpdateRequest'
+            examples:
+              metadataUpdate:
+                summary: Update metadata only
+                description: Update title and description without changing content
+                value:
+                  id: 1092
+                  title: "Updated API Documentation"
+                  description: "Updated description for API docs"
+                  KnowledgeSource: 1
+              replaceFile:
+                summary: Replace file content
+                description: Update with new file while preserving metadata
+                value:
+                  id: 1092
+                  title: "Updated Document"
+                  description: "Document with new content"
+                  KnowledgeSource: 0
+                  AIKnowledgeSources:
+                    - content: "{\"FileUrl\":\"https://cdn.example.com/new.docx\",\"FileName\":\"new.docx\",\"FilePath\":\"PlatformAttachments/LIVE/12345/new.docx\",\"FileSize\":15000}"
+                      id: 1092
+      responses:
+        '200':
+          description: Knowledge entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+    delete:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Delete Knowledge Unit
+      description: |
+        Remove a knowledge unit from your bot's knowledge base.
+        
+        **Warning:** This action is irreversible and will:
+        - Remove the knowledge unit permanently
+        - Delete associated indexed content
+        - Make the content unavailable for RAG queries
+        - Not affect the original source files or URLs
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: deleteKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID
+          example: "12345"
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Knowledge entry ID to delete
+          example: "1092"
+      responses:
+        '200':
+          description: Knowledge entry deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
 
   /api/v2/AQL/SpeechToText:
     post:

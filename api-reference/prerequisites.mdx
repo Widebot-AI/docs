@@ -1,19 +1,57 @@
 ---
 title: API Prerequisites
-description: How to get your Bot ID and API Key from the AQL platform.
-icon: "key"
 ---
 
-# API Prerequisites
+# Getting Your API Credentials
 
-Before you can call any AQL AI Developer API, you’ll need two values from the **AQL platform**:
+To authenticate with AQL's AI APIs, you need two pieces of information:
 
-1. **Log in to the AQL platform**  
-   → Go to **Account Settings → APIs**.
+- **Bot ID**: Your workspace identifier
+- **API Key**: Your authentication token
 
-2. **Get your Bot ID**  
-   → Copy the **Bot ID** shown on the APIs page.
+## Step-by-Step Guide
 
-3. **Generate an API Key**  
-   → From the same page, click **Generate API Key**.  
-   → Copy the generated **API Key**.
+### 1. Access the APIs Page
+
+Navigate to your workspace and access the APIs section:
+
+1. Open **Workspace Settings** from the left sidebar
+2. Click on **APIs**
+3. Your **Bot ID** will be displayed on this page
+
+### 2. Generate Your API Key
+
+If you don't have an API key yet:
+
+1. Click the **Modify API** button on the APIs page
+2. You'll be redirected to your **Account Settings**
+3. In Account Settings, click **Generate New API Key**
+4. Your new API key will be displayed
+5. Copy and save it securely (you won't be able to see it again)
+
+### 3. Return to APIs Page
+
+After generating your API key:
+
+1. Navigate back to **Workspace Settings → APIs**
+2. Both your **Bot ID** and **API Key** will now be visible
+3. Copy both credentials for use in your API requests
+
+<Warning>
+**Security Best Practices**
+- Never share your API key publicly or commit it to version control
+- Rotate your API key regularly
+- Store credentials securely using environment variables or secret management tools
+</Warning>
+
+## What's Next?
+
+Once you have your credentials, you're ready to start making API calls:
+
+- Browse the [Endpoints](/api-reference/endpoint) to find the API that fits your use case
+- Check the code examples in each endpoint for implementation details
+- Test your integration using the provided request/response samples
+
+## Need Help?
+
+For detailed information about managing your credentials, see [APIs & Credentials](/api-credentials).

@@ -8,6 +8,11 @@
     /* brand */
     --aql-purple: #7209B7;
     --aql-purple-weak: rgba(114, 9, 183, .35);
+    
+    /* Override Mintlify's default navigation colors */
+    --primary: #7209B7;
+    --primary-light: rgba(114, 9, 183, 0.1);
+    --primary-dark: #5a0792;
   
     /* buttons */
     --aql-btn-inactive:#666668; /* not active */
@@ -135,9 +140,245 @@
   }
   [data-theme="dark"] .aql-pill{
     background: rgba(114,9,183,.14);
-    border-color: var(--aql-purple-weak);
+  }
+
+  /* ===========================
+     Header Customization
+     =========================== */
+  
+  /* Active Tab Indicator - White underline for selected tab */
+  /* Target the exact structure from the HTML */
+  
+  /* Make the underline div always visible for active tabs (not just hover) */
+  .nav-tabs-item .bg-primary,
+  .nav-tabs-item .dark\:bg-primary-light,
+  a.nav-tabs-item > div.bg-primary,
+  a.nav-tabs-item > div[class*="bg-primary"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    background-color: #7209B7 !important; /* Force brand purple color */
+    height: 2px !important; /* Make it slightly thicker */
   }
   
+  /* Dark mode - force white */
+  .dark .nav-tabs-item .bg-primary,
+  .dark .nav-tabs-item .dark\:bg-primary-light,
+  .dark a.nav-tabs-item > div.bg-primary,
+  .dark a.nav-tabs-item > div[class*="bg-primary"],
+  html[data-theme="dark"] .nav-tabs-item .bg-primary,
+  html[data-theme="dark"] .nav-tabs-item .dark\:bg-primary-light,
+  html[data-theme="dark"] a.nav-tabs-item > div.bg-primary,
+  html[data-theme="dark"] a.nav-tabs-item > div[class*="bg-primary"] {
+    background-color: #ffffff !important; /* Force white in dark mode */
+  }
+  
+  /* Force the underline to show when tab contains current page href */
+  a.nav-tabs-item[href*="/api-reference"] .bg-primary,
+  a.nav-tabs-item[href*="/api-reference"] .dark\:bg-primary-light,
+  a.nav-tabs-item[href="/quickstart"] .bg-primary,
+  a.nav-tabs-item[href="/quickstart"] .dark\:bg-primary-light,
+  a.nav-tabs-item[href="/index"] .bg-primary,
+  a.nav-tabs-item[href="/index"] .dark\:bg-primary-light {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+  }
+  
+  /* Alternative: Add the underline div if it's missing on active state */
+  a.nav-tabs-item[aria-current="page"]::after,
+  a.nav-tabs-item.active::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 1.5px !important;
+    background-color: var(--primary, #7209B7) !important;
+    display: block !important;
+  }
+  
+  /* Dark mode */
+  .dark a.nav-tabs-item[aria-current="page"]::after,
+  .dark a.nav-tabs-item.active::after,
+  html[data-theme="dark"] a.nav-tabs-item[aria-current="page"]::after,
+  html[data-theme="dark"] a.nav-tabs-item.active::after {
+    background-color: var(--primary-light, #b794f6) !important;
+  }
+  
+  /* Remove border/divider line below header */
+  .nav-header,
+  .nav-header::after,
+  [data-testid="nav-header"] {
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Center search bar in header */
+  .search-container,
+  [data-testid="search-container"] {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  /* Ensure header layout is properly structured */
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    min-height: 80px;
+  }
+  
+  /* Style the right side of header with CTA buttons */
+  .nav-header > div:last-child,
+  .nav-header .header-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* Make logo bigger with additional CSS */
+  .nav-header img,
+  .nav-header .logo img,
+  [data-testid="logo"] img,
+  .logo img,
+  img[alt*="logo"],
+  img[src*="aql-logo"] {
+    max-width: 140px !important;
+    max-height: 50px !important;
+    width: 140px !important;
+    height: 50px !important;
+    object-fit: contain !important;
+  }
+  
+  /* Target logo container */
+  .nav-header .logo,
+  [data-testid="logo"],
+  .logo {
+    display: flex !important;
+    align-items: center !important;
+    height: 60px !important;
+  }
+  
+  /* Style Dashboard with low opacity button styling */
+  a[href="https://aql.widebot.sa/dashboard"],
+  a[href*="/dashboard"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 0.6rem !important;
+    background: rgba(114, 9, 183, 0.1) !important;
+    color: var(--aql-purple) !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    margin: 0 0.1rem !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid rgba(114, 9, 183, 0.2) !important;
+    font-size: 0.85rem !important;
+    min-height: 2rem !important;
+    opacity: 0.7 !important;
+  }
+  
+  /* Add arrow after Dashboard text */
+  a[href="https://aql.widebot.sa/dashboard"]::after,
+  a[href*="/dashboard"]::after {
+    content: "→" !important;
+    font-size: 0.75rem !important;
+    font-weight: bold !important;
+    opacity: 0.8 !important;
+  }
+  
+  a[href="https://aql.widebot.sa/dashboard"]:hover,
+  a[href*="/dashboard"]:hover {
+    background: rgba(114, 9, 183, 0.15) !important;
+    color: var(--aql-purple) !important;
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+  }
+  
+  a[href="https://aql.widebot.sa/dashboard"]:active,
+  a[href*="/dashboard"]:active {
+    transform: translateY(0) !important;
+  }
+  
+  a[href="https://aql.widebot.sa/dashboard"]:focus-visible,
+  a[href*="/dashboard"]:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(114, 9, 183, 0.3) !important;
+  }
+  
+  /* Dark mode styling for Dashboard - comprehensive selectors */
+  html[data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"],
+  html[data-theme="dark"] a[href*="/dashboard"],
+  [data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"],
+  [data-theme="dark"] a[href*="/dashboard"],
+  .dark a[href="https://aql.widebot.sa/dashboard"],
+  .dark a[href*="/dashboard"],
+  body.dark a[href="https://aql.widebot.sa/dashboard"],
+  body.dark a[href*="/dashboard"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  html[data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"]:hover,
+  html[data-theme="dark"] a[href*="/dashboard"]:hover,
+  [data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"]:hover,
+  [data-theme="dark"] a[href*="/dashboard"]:hover,
+  .dark a[href="https://aql.widebot.sa/dashboard"]:hover,
+  .dark a[href*="/dashboard"]:hover,
+  body.dark a[href="https://aql.widebot.sa/dashboard"]:hover,
+  body.dark a[href*="/dashboard"]:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
+  
+  /* Dark mode arrow color - comprehensive selectors */
+  html[data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"]::after,
+  html[data-theme="dark"] a[href*="/dashboard"]::after,
+  [data-theme="dark"] a[href="https://aql.widebot.sa/dashboard"]::after,
+  [data-theme="dark"] a[href*="/dashboard"]::after,
+  .dark a[href="https://aql.widebot.sa/dashboard"]::after,
+  .dark a[href*="/dashboard"]::after,
+  body.dark a[href="https://aql.widebot.sa/dashboard"]::after,
+  body.dark a[href*="/dashboard"]::after {
+    color: #ffffff !important;
+  }
+  
+  /* Remove all special styling from other navbar links */
+  a[href*="aql.widebot.sa"]:not([href*="/dashboard"]) {
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    min-height: auto !important;
+    font-weight: normal !important;
+    display: inline-block !important;
+    opacity: 1 !important;
+    border: none !important;
+    transition: none !important;
+    text-decoration: none !important;
+  }
+  
+  a[href*="aql.widebot.sa"]:not([href*="/dashboard"]):hover {
+    color: var(--aql-purple) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+
+  
+  
+
+
   /* ===========================
      Utility helpers
      =========================== */
@@ -159,4 +400,333 @@
   
   /* emphasize links on hover slightly with brand tint */
   a:hover{ text-decoration: none; }
+  
+  /* ===========================
+     Clean Active Navigation Styling
+     Match hover state for active items
+     =========================== */
+  
+  /* ALL navigation items - slight opacity reduction */
+  #sidebar-group a:not(.bg-primary\/10),
+  #sidebar-group a:not(.bg-primary\/10) * {
+    opacity: 0.85;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+  }
+  
+  /* Active item - match the hover state look with stronger background */
+  #sidebar-group a.bg-primary\/10 {
+    /* Use stronger background like in the image */
+    background-color: rgba(96, 96, 108, 0.1) !important;
+    /* Ensure full width background */
+    width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    /* Remove border-radius to prevent positioning issues */
+    /* border-radius: 8px !important; */
+  }
+  
+  /* Dark mode active - match hover state */
+  .dark #sidebar-group a.bg-primary\/10,
+  html[data-theme="dark"] #sidebar-group a.bg-primary\/10 {
+    background-color: rgba(229, 229, 229, 0.1) !important;
+  }
+  
+  /* Active item text and icons - full opacity and force visibility */
+  #sidebar-group a.bg-primary\/10,
+  #sidebar-group a.bg-primary\/10 *,
+  #sidebar-group a.bg-primary\/10 svg,
+  #sidebar-group a.bg-primary\/10 svg path,
+  #sidebar-group a.bg-primary\/10 img,
+  #sidebar-group a.bg-primary\/10 i,
+  #sidebar-group a.bg-primary\/10 span {
+    opacity: 1 !important;
+    display: inline-block !important;
+    visibility: visible !important;
+  }
+
+  /* COMPREHENSIVE ICON VISIBILITY FIX */
+  /* Target all possible icon containers and elements */
+  #sidebar-group a.bg-primary\/10 [class*="icon"],
+  #sidebar-group a.bg-primary\/10 [class*="Icon"],
+  #sidebar-group a.bg-primary\/10 [data-icon],
+  #sidebar-group a.bg-primary\/10 .lucide,
+  #sidebar-group a.bg-primary\/10 .icon,
+  #sidebar-group a.bg-primary\/10 svg,
+  #sidebar-group a.bg-primary\/10 img,
+  #sidebar-group a.bg-primary\/10 i,
+  #sidebar-group a.bg-primary\/10 span[role="img"],
+  #sidebar-group a.bg-primary\/10 [aria-hidden="true"],
+  #sidebar-group a.bg-primary\/10 [aria-hidden="false"] {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 1rem !important;
+    min-height: 1rem !important;
+  }
+
+  /* Force SVG elements specifically */
+  #sidebar-group a.bg-primary\/10 svg {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+
+  /* Target any hidden or display:none elements */
+  #sidebar-group a.bg-primary\/10 *[style*="display: none"],
+  #sidebar-group a.bg-primary\/10 *[style*="visibility: hidden"],
+  #sidebar-group a.bg-primary\/10 *[style*="opacity: 0"] {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* MINTLIFY SPECIFIC OVERRIDES */
+  /* Override any Mintlify CSS that hides icons on active items */
+  nav a.bg-primary\/10 [class*="lucide"],
+  nav a.bg-primary\/10 [class*="icon"],
+  nav a.bg-primary\/10 svg,
+  aside a.bg-primary\/10 [class*="lucide"],
+  aside a.bg-primary\/10 [class*="icon"],
+  aside a.bg-primary\/10 svg,
+  [role="navigation"] a.bg-primary\/10 [class*="lucide"],
+  [role="navigation"] a.bg-primary\/10 [class*="icon"],
+  [role="navigation"] a.bg-primary\/10 svg {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  /* Override any JavaScript that might be setting display:none */
+  #sidebar-group a.bg-primary\/10 *:not(:empty) {
+    display: inline-block !important;
+  }
+
+  /* Ensure first child (usually the icon) is visible */
+  #sidebar-group a.bg-primary\/10 > *:first-child {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* FIX FOR MINTLIFY'S MASK-BASED ICONS */
+  /* Target the exact SVG structure you showed me */
+  .h-4.w-4.bg-primary,
+  .h-4.w-4.bg-primary.dark\\:bg-primary-light {
+    /* Override the background colors that are making icons invisible */
+    background-color: #666668 !important; /* Dark gray for visibility */
+  }
+
+  /* Dark mode override */
+  .dark .h-4.w-4.bg-primary.dark\\:bg-primary-light,
+  html[data-theme="dark"] .h-4.w-4.bg-primary.dark\\:bg-primary-light {
+    background-color: #e5e5e5 !important; /* Light gray for dark mode */
+  }
+
+  /* Ensure the SVG is visible */
+  svg.h-4.w-4 {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* SIMPLE ICON VISIBILITY - Use brand colors when selected */
+  a[class*="bg-primary"] svg[style*="mask-image"] {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background-color: #7209B7 !important; /* Brand purple for icon */
+    margin-right: 0.75rem !important; /* Add more space between icon and text */
+  }
+
+  /* Dark mode icons - keep light color */
+  .dark a[class*="bg-primary"] svg[style*="mask-image"],
+  html[data-theme="dark"] a[class*="bg-primary"] svg[style*="mask-image"] {
+    background-color: #e5e5e5 !important;
+  }
+
+  /* Use brand purple for text when selected in light mode */
+  a[class*="bg-primary"] {
+    color: #7209B7 !important; /* Brand purple for text */
+  }
+
+  /* Dark mode text - keep light color */
+  .dark a[class*="bg-primary"],
+  html[data-theme="dark"] a[class*="bg-primary"] {
+    color: #e5e5e5 !important;
+  }
+
+  
+  /* Hover effect on inactive items - match Mintlify's default hover */
+  #sidebar-group a:not(.bg-primary\/10):hover {
+    opacity: 1;
+  }
+
+  /* Fix spacing between POST label and endpoint text in API navigation */
+  /* For non-selected endpoints - smaller spacing */
+  a:not([class*="bg-primary"]) [class*="method"],
+  a:not([class*="bg-primary"]) .method-badge,
+  a:not([class*="bg-primary"]) .http-method,
+  a:not([class*="bg-primary"]) [data-method],
+  a:not([class*="bg-primary"])[href*="api-reference"] span:first-child {
+    margin-right: 0.125rem !important; /* Minimal spacing for non-selected */
+  }
+
+  /* For selected endpoints - keep current spacing */
+  a[class*="bg-primary"] [class*="method"],
+  a[class*="bg-primary"] .method-badge,
+  a[class*="bg-primary"] .http-method,
+  a[class*="bg-primary"] [data-method],
+  a[class*="bg-primary"][href*="api-reference"] span:first-child {
+    margin-right: 1rem !important; /* Keep current spacing for selected */
+  }
+
+  /* Make selected endpoints wrap text nicely */
+  a[class*="bg-primary"][href*="api-reference"] {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Ensure the text content can wrap */
+  a[class*="bg-primary"][href*="api-reference"] > * {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Fix light/dark mode toggle - hide inactive icon */
+  /* Hide the inactive theme icon - more comprehensive targeting */
+  [data-theme="light"] svg[class*="moon"],
+  [data-theme="dark"] svg[class*="sun"],
+  html[data-theme="light"] svg[class*="moon"],
+  html[data-theme="dark"] svg[class*="sun"],
+  .dark svg[class*="sun"],
+  .light svg[class*="moon"] {
+    display: none !important;
+  }
+
+  /* Target button elements that might contain both icons */
+  button[aria-label*="theme"] svg:not(:first-child),
+  button[aria-label*="mode"] svg:not(:first-child),
+  .theme-toggle button svg:not(:first-child),
+  .mode-toggle button svg:not(:first-child) {
+    display: none !important;
+  }
+
+  /* More specific targeting for common icon patterns */
+  svg[data-lucide="moon"]:not(.active),
+  svg[data-lucide="sun"]:not(.active) {
+    display: none !important;
+  }
+  
+  /* Active item hover - slightly stronger */
+  #sidebar-group a.bg-primary\/10:hover {
+    background-color: rgba(96, 96, 108, 0.15) !important;
+  }
+  
+  /* Dark mode active hover */
+  .dark #sidebar-group a.bg-primary\/10:hover,
+  html[data-theme="dark"] #sidebar-group a.bg-primary\/10:hover {
+    background-color: rgba(229, 229, 229, 0.15) !important;
+  }
+
+  /* Dashboard button hover - white text in light mode */
+  a[href*="workspace/list"]:hover {
+    color: white !important; /* White text on hover */
+  }
+
+  /* Dark mode hover - keep original behavior */
+  .dark a[href*="workspace/list"]:hover,
+  html[data-theme="dark"] a[href*="workspace/list"]:hover {
+    color: white !important;
+  }
+
+  /* "On This Page" section - target the actual HTML structure */
+  /* Non-selected TOC items - low opacity */
+  .toc a:not(.text-primary) {
+    opacity: 0.85 !important;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Selected TOC item (has text-primary class) - stronger contrast */
+  .toc a.text-primary {
+    opacity: 1 !important;
+    color: #000000 !important; /* Blacker text in light mode */
+    font-weight: 700 !important; /* Very bold text */
+  }
+
+  /* Dark mode for selected TOC item - whiter text */
+  .dark .toc a.text-primary {
+    color: #ffffff !important; /* Whiter text in dark mode */
+    font-weight: 700 !important; /* Very bold text */
+  }
+
+  /* ===========================
+     Custom Icon for "Welcome to AQL" page
+     Replace the sparkles icon with custom AQL logo SVG
+     =========================== */
+  
+  /* Apply custom mask to all states first */
+  a[href="/index"] svg[style*="mask-image"],
+  a[href="/"] svg[style*="mask-image"],
+  .dark a[href="/index"] svg[style*="mask-image"],
+  .dark a[href="/"] svg[style*="mask-image"],
+  html[data-theme="dark"] a[href="/index"] svg[style*="mask-image"],
+  html[data-theme="dark"] a[href="/"] svg[style*="mask-image"],
+  body.dark a[href="/index"] svg[style*="mask-image"],
+  body.dark a[href="/"] svg[style*="mask-image"] {
+    mask-image: url('/images/Light.svg') !important;
+    mask-size: contain !important;
+    mask-position: center !important;
+    mask-repeat: no-repeat !important;
+  }
+  
+  /* Light mode - not selected - gray icon */
+  a[href="/index"]:not([class*="bg-primary"]) svg[style*="mask-image"],
+  a[href="/"]:not([class*="bg-primary"]) svg[style*="mask-image"] {
+    background-color: #666668 !important;
+  }
+  
+  /* Light mode - selected - purple icon */
+  a[href="/index"][class*="bg-primary"] svg[style*="mask-image"],
+  a[href="/"][class*="bg-primary"] svg[style*="mask-image"] {
+    background-color: #7209B7 !important;
+  }
+  
+  /* Dark mode - ALL instances get light gray (override everything) */
+  [data-theme="dark"] a[href="/index"] svg[style*="mask-image"],
+  [data-theme="dark"] a[href="/"] svg[style*="mask-image"],
+  .dark a[href="/index"] svg[style*="mask-image"],
+  .dark a[href="/"] svg[style*="mask-image"],
+  html.dark a[href="/index"] svg[style*="mask-image"],
+  html.dark a[href="/"] svg[style*="mask-image"],
+  body[data-theme="dark"] a[href="/index"] svg[style*="mask-image"],
+  body[data-theme="dark"] a[href="/"] svg[style*="mask-image"],
+  html[data-theme="dark"] a[href="/index"] svg[style*="mask-image"],
+  html[data-theme="dark"] a[href="/"] svg[style*="mask-image"] {
+    background-color: #e5e5e5 !important;
+  }
+  
+  /* Dark mode - selected - light gray icon */
+  [data-theme="dark"] a[href="/index"][class*="bg-primary"] svg[style*="mask-image"],
+  [data-theme="dark"] a[href="/"][class*="bg-primary"] svg[style*="mask-image"],
+  .dark a[href="/index"][class*="bg-primary"] svg[style*="mask-image"],
+  .dark a[href="/"][class*="bg-primary"] svg[style*="mask-image"],
+  html.dark a[href="/index"][class*="bg-primary"] svg[style*="mask-image"],
+  html.dark a[href="/"][class*="bg-primary"] svg[style*="mask-image"],
+  body[data-theme="dark"] a[href="/index"][class*="bg-primary"] svg[style*="mask-image"],
+  body[data-theme="dark"] a[href="/"][class*="bg-primary"] svg[style*="mask-image"] {
+    background-color: #e5e5e5 !important;
+  }
+
   
