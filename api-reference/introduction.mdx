@@ -36,11 +36,11 @@ Convert Arabic speech to text and text to speech. Includes support for various A
 All API requests use the following base URL:
 
 ```
-https://api.aql.widebot.net
+https://gateway.widebot.net
 ```
 
 ## Authentication
 
-Include your credentials in the request body for all API calls. See individual endpoint documentation for specific authentication requirements.
+Send your credentials as request headers on every API call: `x-user-auth` (your API Key) and `x-bot` (your Bot ID). See individual endpoint documentation for specific requirements.
 
 ---
