@@ -563,10 +563,23 @@ components:
           type: string
           example: "ar-eg"
           description: Language code for transcription output
-        MaxRecordLengthInSeconds: 
+        MaxRecordLengthInSeconds:
           type: string
           example: "180"
           description: Maximum audio duration to process
+        RecordUrl:
+          type: string
+          format: uri
+          description: URL of an audio file to transcribe, as an alternative to uploading Record
+          example: "https://cdn.widebot.net/tmp/audio/sample.wav"
+        SampleRate:
+          type: string
+          description: Sample rate of the provided audio in Hz
+          example: "16000"
+        ModelName:
+          type: string
+          description: Transcription model to use
+          example: "default"
 
     STTStreamForm:
       type: object
@@ -592,18 +605,35 @@ components:
           type: string
           example: "ar-eg"
           description: Language for transcription output
-        TaskType: 
+        TaskType:
           type: string
           example: "Transcript"
           description: Type of processing (Transcript/Translate)
-        OutputFormat: 
+        OutputFormat:
           type: string
           example: "Text"
           description: Format of the output
+        RecordUrl:
+          type: string
+          format: uri
+          description: URL of an audio file to transcribe, as an alternative to uploading Record
+          example: "https://cdn.widebot.net/tmp/audio/sample.wav"
+        MaxRecordLengthInSeconds:
+          type: string
+          example: "180"
+          description: Maximum audio duration to process
+        SampleRate:
+          type: string
+          description: Sample rate of the provided audio in Hz
+          example: "16000"
+        ModelName:
+          type: string
+          description: Transcription model to use
+          example: "default"
 
     TTSStandardRequest:
       type: object
-      required: [TextMessage, LanguageCode, speaker]
+      required: [TextMessage, LanguageCode, Speaker]
       properties:
         TextMessage:
           type: string
@@ -613,10 +643,14 @@ components:
           type: string
           description: Language code for speech synthesis
           example: "ar-sa"
-        speaker:
+        Speaker:
           type: string
           description: Voice to use for speech generation
           example: "Rawy"
+        ModelType:
+          type: string
+          description: Voice model version to use
+          example: "v1"
         temperature:
           type: number
           format: float
@@ -645,11 +679,15 @@ components:
           type: string
           description: Language code for speech
           example: "ar"
-        Speaker: 
+        Speaker:
           type: string
           description: Voice to use for generation
           example: "Hesham"
-        Temperature: 
+        ModelType:
+          type: string
+          description: Voice model version to use
+          example: "v1"
+        Temperature:
           type: number
           format: float
           minimum: 0.0
@@ -1365,7 +1403,7 @@ paths:
                     
                     data: {"status": "complete", "duration": 8.5, "consumption": "8/1000"}
 
-  /api/v2/AQL/TextToSpeech:
+  /api/v3/AQL/TextToSpeech:
     post:
       tags: ["Text to Speech"]
       summary: Convert Text to Speech
@@ -1403,20 +1441,16 @@ paths:
                 value:
                   TextMessage: "مرحباً بكم في منصة وايد بوت للذكاء الاصطناعي"
                   LanguageCode: "ar-sa"
-                  speaker: "Rawy"
-                  temperature: 0.5
-                  output_sr: 24000
-                  session_id: "tts-session-001"
+                  Speaker: "Rawy"
+                  ModelType: "v1"
               englishText:
                 summary: English text to speech
                 description: Convert English text to speech
                 value:
                   TextMessage: "Welcome to Widebot AI platform"
                   LanguageCode: "eng"
-                  speaker: "Marcos Rudaski"
-                  temperature: 0.7
-                  output_sr: 24000
-                  session_id: "tts-session-002"
+                  Speaker: "Marcos Rudaski"
+                  ModelType: "v1"
       responses:
         '200':
           description: Text to speech conversion successful
@@ -1468,7 +1502,7 @@ paths:
                     description: Character usage tracking
                     example: "18/15000"
 
-  /api/v1/AQL/Stream/TextToSpeech:
+  /api/v2/AQL/Stream/TextToSpeech:
     post:
       tags: ["Text to Speech"]
       summary: Stream Speech
@@ -1505,8 +1539,7 @@ paths:
                   TextMessage: "مرحباً! هذا مثال على التحويل الصوتي المباشر للنص العربي"
                   LanguageCode: "ar"
                   Speaker: "Hesham"
-                  Temperature: 0.8
-                  OutputSampleRate: 24000
+                  ModelType: "v1"
                   StreamChunkSize: 300
       responses:
         '200':
