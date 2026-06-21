@@ -633,7 +633,7 @@ components:
 
     TTSStandardRequest:
       type: object
-      required: [TextMessage, LanguageCode, Speaker]
+      required: [TextMessage, LanguageCode, Speaker, ModelType]
       properties:
         TextMessage:
           type: string
@@ -649,7 +649,7 @@ components:
           example: "Rawy"
         ModelType:
           type: string
-          description: Voice model version to use
+          description: "Required. Voice model version. One of: v1, v1-fast, v2, v3, v4, or eval-*."
           example: "v1"
         temperature:
           type: number
@@ -669,7 +669,7 @@ components:
 
     TTSStreamRequest:
       type: object
-      required: [TextMessage, LanguageCode, Speaker]
+      required: [TextMessage, LanguageCode, Speaker, ModelType]
       properties:
         TextMessage: 
           type: string
@@ -685,7 +685,7 @@ components:
           example: "Hesham"
         ModelType:
           type: string
-          description: Voice model version to use
+          description: "Required. Voice model version. One of: v1, v1-fast, v2, v3, v4, or eval-*."
           example: "v1"
         Temperature:
           type: number
@@ -1417,10 +1417,7 @@ paths:
         - Proper Arabic phonetics
         
         **Available Speakers:**
-        - **Arabic Male**: 
-          - **Hesham** - **HIGHLY RECOMMENDED** for MSA/Egyptian
-          - **Rawy** - **HIGHLY RECOMMENDED** for Saudi
-          - Other: Mohamed, Adel, Hytham
+        - **Arabic Male**: Hesham (recommended for MSA/Egyptian), Rawy (recommended for Saudi), Mohamed, Adel, Hytham
         - **Arabic Female**: Hala (Saudi), Lina, Mona, Alice, Esraa
         - **English**: Marcos Rudaski, Claribel Dervla
         
