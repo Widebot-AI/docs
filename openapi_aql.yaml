@@ -546,7 +546,7 @@ components:
 
     STTStandardForm:
       type: object
-      required: [Record, TargetLanguage, ModelName]
+      required: [Record, SessionId, TargetLanguage, ModelName]
       properties:
         Record:
           type: string
