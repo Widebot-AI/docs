@@ -546,7 +546,7 @@ components:
 
     STTStandardForm:
       type: object
-      required: [Record, TargetLanguage, ModelName]
+      required: [Record, SessionId, TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -560,7 +560,7 @@ components:
           type: string
           enum: ["true","false"]
           example: "true"
-          description: Whether to use default sample rate optimization
+          description: 'Set to "true" to use the default sample rate. Provide this or an explicit SampleRate; transcription fails without sample-rate information.'
         TargetLanguage: 
           type: string
           example: "ar-eg"
@@ -599,7 +599,7 @@ components:
           type: string
           enum: ["true","false"]
           example: "true"
-          description: Whether to use default sample rate
+          description: 'Set to "true" to use the default sample rate. Provide this or an explicit SampleRate; transcription fails without sample-rate information.'
         SourceLanguage: 
           type: string
           example: "ar-eg"
@@ -1390,6 +1390,7 @@ paths:
                   SessionId: "test-session-123"
                   SetDefaultSampleRate: "true"
                   TargetLanguage: "ar-eg"
+                  ModelName: "conformer-ar"
                   MaxRecordLengthInSeconds: "180"
       responses:
         '200':
