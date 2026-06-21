@@ -546,7 +546,7 @@ components:
 
     STTStandardForm:
       type: object
-      required: [TargetLanguage, ModelName]
+      required: [Record, TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -572,7 +572,7 @@ components:
         RecordUrl:
           type: string
           format: uri
-          description: URL of an audio file to transcribe, as an alternative to uploading Record
+          description: "Optional. URL of an audio file to transcribe."
           example: "https://cdn.widebot.net/tmp/audio/sample.wav"
         SampleRate:
           type: string
@@ -585,7 +585,7 @@ components:
 
     STTStreamForm:
       type: object
-      required: [TargetLanguage, ModelName]
+      required: [Record, TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -619,7 +619,7 @@ components:
         RecordUrl:
           type: string
           format: uri
-          description: URL of an audio file to transcribe, as an alternative to uploading Record
+          description: "Optional. URL of an audio file to transcribe."
           example: "https://cdn.widebot.net/tmp/audio/sample.wav"
         MaxRecordLengthInSeconds:
           type: string
