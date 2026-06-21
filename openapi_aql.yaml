@@ -898,19 +898,20 @@ paths:
                     
                     data: {"final": true, "metadata": {"total_tokens": 456}, "consumption": "456/10000000"}
 
-  /api/AIKnowledge/upload-to-s3:
-    get:
+  /backend/UploadBlob:
+    post:
       tags: ["RAG Knowledge Indexing"]
-      summary: Upload Knowledge Unit
+      summary: Upload File
       description: |
-        Get an upload URL for sending the raw file of a knowledge unit. 
-        After the upload succeeds, you must call "Add Knowledge" to register the uploaded file as a knowledge unit in your bot.
-        
+        Upload a raw file (blob) to be used as a knowledge unit source. Returns the stored file
+        details, which you then pass to "Register Knowledge Unit" (KnowledgeSource = 0) to index it.
+
+        This replaces the older presigned-URL upload flow.
+
         **Process:**
-        1. Call this endpoint to get an upload URL
-        2. Upload your file using the provided URL
-        3. Call "Add Knowledge" to register the uploaded file as a knowledge unit
-        
+        1. Upload the file here as multipart/form-data
+        2. Call "Register Knowledge Unit" with the returned file details
+
         **Supported File Types:**
         - PDF documents
         - Microsoft Word (DOCX)
@@ -919,34 +920,37 @@ paths:
         - And other common document formats
 
         Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
-      operationId: getUploadUrl
+      operationId: uploadBlob
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [Attachment]
+              properties:
+                Attachment:
+                  type: string
+                  format: binary
+                  description: The file to upload
+                Model.FileType:
+                  type: string
+                  description: "Optional: Image, Audio, Video, or File. Inferred from the file content-type if omitted."
+                  example: "File"
+                ConvertAttachmentTo:
+                  type: string
+                  description: Optional target format to convert the attachment to
+                EncryptFileName:
+                  type: boolean
+                  description: Whether to encrypt the stored file name
+                  default: false
       responses:
         '200':
-          description: Upload URL for file
+          description: File uploaded successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  StatusCode:
-                    type: integer
-                    example: 200
-                  Response:
-                    type: object
-                    properties:
-                      uploadUrl:
-                        type: string
-                        format: uri
-                        description: Upload URL for file
-                      fileKey:
-                        type: string
-                        description: File key identifier
-                      expiresIn:
-                        type: integer
-                        description: URL expiration time in seconds
-                  Consumption:
-                    type: string
-                    example: "0/10000000"
+                $ref: '#/components/schemas/StandardResponse'
 
   /api/AIKnowledge/{botId}:
     post:
@@ -960,7 +964,7 @@ paths:
         - **Files (KnowledgeSource = 0)**: PDF, DOCX, TXT, and other document formats
         
         **Process:**
-        1. For files: First upload using the upload URL endpoint
+        1. For files: First upload the file via "Upload File" (POST /backend/UploadBlob)
         2. Create a knowledge unit with file details or URL
         3. System automatically indexes the content
         4. Content becomes available for RAG queries
@@ -1034,12 +1038,28 @@ paths:
           description: Bot ID to list knowledge for
           example: "12345"
         - in: query
-          name: search
+          name: searchTitle
           required: false
           schema:
             type: string
-          description: Optional search term to filter knowledge units
+          description: Optional search term to filter knowledge units by title
           example: "API documentation"
+        - in: query
+          name: pageNumber
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of knowledge units per page
+          example: 10
       responses:
         '200':
           description: List of knowledge units retrieved successfully
@@ -1076,6 +1096,38 @@ paths:
       responses:
         '200':
           description: Knowledge unit details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/AIKnowledge/byId/{botId}/{knowledgeId}:
+    delete:
+      tags: ["RAG Knowledge Indexing"]
+      summary: Delete Knowledge Unit
+      description: |
+        Permanently delete a knowledge unit and remove its content from the bot's knowledge base.
+
+        Note: Example requests/responses shown here are illustrative. When using the live "Try it" tool, you may see two responses: an HTTP status preview and the API's JSON body.
+      operationId: deleteKnowledge
+      parameters:
+        - in: path
+          name: botId
+          required: true
+          schema:
+            type: string
+          description: Bot ID containing the knowledge unit
+          example: "16149"
+        - in: path
+          name: knowledgeId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the knowledge unit to delete
+          example: "8778"
+      responses:
+        '200':
+          description: Knowledge unit deleted successfully
           content:
             application/json:
               schema:
