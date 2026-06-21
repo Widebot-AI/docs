@@ -417,7 +417,7 @@ components:
           example: "ما هو الاسم الكامل لمحمد صلاح؟"
         IndexNames:
           type: array
-          description: Names of document indexes to search
+          description: "Names of document indexes to search (each matches a knowledge unit title). Required for the streaming endpoint; optional for the standard endpoint."
           items: 
             type: string
           example: ["Mohamed Salah"]
@@ -459,8 +459,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/RAGAnswerRequest'
         - type: object
+          required: [IndexNames]
           properties:
-            IsStream: 
+            IsStream:
               type: boolean
               example: true
               description: Must be true for streaming responses
@@ -545,6 +546,7 @@ components:
 
     STTStandardForm:
       type: object
+      required: [TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -578,11 +580,12 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: Transcription model to use
-          example: "default"
+          description: "Required. Speech-to-text model. Use conformer-ar for now."
+          example: "conformer-ar"
 
     STTStreamForm:
       type: object
+      required: [TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -628,12 +631,12 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: Transcription model to use
-          example: "default"
+          description: "Required. Speech-to-text model. Use conformer-ar for now."
+          example: "conformer-ar"
 
     TTSStandardRequest:
       type: object
-      required: [TextMessage, LanguageCode, Speaker]
+      required: [TextMessage, LanguageCode, Speaker, ModelType]
       properties:
         TextMessage:
           type: string
@@ -649,7 +652,7 @@ components:
           example: "Rawy"
         ModelType:
           type: string
-          description: Voice model version to use
+          description: "Required. Voice model version. One of: v1, v1-fast, v2, v3, v4, or eval-*."
           example: "v1"
         temperature:
           type: number
@@ -669,7 +672,7 @@ components:
 
     TTSStreamRequest:
       type: object
-      required: [TextMessage, LanguageCode, Speaker]
+      required: [TextMessage, LanguageCode, Speaker, ModelType]
       properties:
         TextMessage: 
           type: string
@@ -685,7 +688,7 @@ components:
           example: "Hesham"
         ModelType:
           type: string
-          description: Voice model version to use
+          description: "Required. Voice model version. One of: v1, v1-fast, v2, v3, v4, or eval-*."
           example: "v1"
         Temperature:
           type: number
@@ -1170,6 +1173,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: >-
+            Bad Request. Returned when the knowledgeId does not exist or does not
+            belong to this bot. Note this API returns 400 here, not 404.
 
 
   /api/v1/RAG/Answer:
@@ -1417,10 +1424,7 @@ paths:
         - Proper Arabic phonetics
         
         **Available Speakers:**
-        - **Arabic Male**: 
-          - **Hesham** - **HIGHLY RECOMMENDED** for MSA/Egyptian
-          - **Rawy** - **HIGHLY RECOMMENDED** for Saudi
-          - Other: Mohamed, Adel, Hytham
+        - **Arabic Male**: Hesham (recommended for MSA/Egyptian), Rawy (recommended for Saudi), Mohamed, Adel, Hytham
         - **Arabic Female**: Hala (Saudi), Lina, Mona, Alice, Esraa
         - **English**: Marcos Rudaski, Claribel Dervla
         
@@ -1465,38 +1469,25 @@ paths:
                   Response:
                     type: object
                     properties:
-                      status:
+                      AudioData:
                         type: string
-                        example: "success"
-                      audio_url:
+                        description: Base64-encoded WAV audio
+                      Metadata:
+                        type: object
+                        description: Audio format details
+                        properties:
+                          Format:
+                            type: string
+                            example: "Wav"
+                          SampleRate:
+                            type: integer
+                            example: 24000
+                          Channels:
+                            type: integer
+                            example: 1
+                      RequestId:
                         type: string
-                        format: uri
-                        description: URL to download the generated audio file
-                        example: "https://cdn.widebot.net/tmp/tts/abc123xyz/output.mp3"
-                      duration_ms:
-                        type: integer
-                        description: Audio duration in milliseconds
-                        example: 1850
-                      characters:
-                        type: integer
-                        description: Number of characters processed
-                        example: 18
-                      language:
-                        type: string
-                        description: Language used for generation
-                        example: "ar-sa"
-                      speaker:
-                        type: string
-                        description: Voice used for generation
-                        example: "Rawy"
-                      output_sr:
-                        type: integer
-                        description: Output sample rate
-                        example: 24000
-                      session_id:
-                        type: string
-                        description: Session identifier
-                        example: "tts-session-001"
+                        example: "req_6a9d7d739b18"
                   Consumption:
                     type: string
                     description: Character usage tracking
