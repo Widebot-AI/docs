@@ -1048,13 +1048,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
 
-  /api/AIKnowledge/{botId}/{knowledgeId}:
+  /qna/AIKnowledge/byId/{knowledgeId}:
     get:
       tags: ["RAG Knowledge Indexing"]
       summary: Get Knowledge Unit by ID
       description: |
         Retrieve detailed information about a specific knowledge unit by its unique identifier.
-        
+
+        The bot is identified by the `x-bot` header, not a path parameter.
+
         **Returns:**
         - Knowledge unit metadata
         - Indexing status
@@ -1065,19 +1067,12 @@ paths:
       operationId: getKnowledgeById
       parameters:
         - in: path
-          name: botId
-          required: true
-          schema:
-            type: string
-          description: Bot ID containing the knowledge unit
-          example: "12345"
-        - in: path
           name: knowledgeId
           required: true
           schema:
             type: string
           description: Unique identifier of the knowledge unit
-          example: "knowledge_123"
+          example: "8778"
       responses:
         '200':
           description: Knowledge unit details retrieved successfully
