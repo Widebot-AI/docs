@@ -939,7 +939,7 @@ paths:
                     
                     data: {"final": true, "metadata": {"total_tokens": 456}, "consumption": "456/10000000"}
 
-  /backend/UploadBlob:
+  /api/UploadBlob:
     post:
       tags: ["RAG Knowledge Indexing"]
       summary: Upload File
@@ -991,7 +991,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StandardResponse'
+                type: object
+                properties:
+                  FileURL:
+                    type: string
+                    format: uri
+                    description: Presigned URL of the uploaded file
+                  FileMimeType:
+                    type: string
+                    description: MIME type of the uploaded file
+                    example: "text/plain"
+                  FileName:
+                    type: string
+                    description: Stored file name
+                  FilePath:
+                    type: string
+                    description: Path of the file in storage
 
   /api/AIKnowledge/{botId}:
     post:
@@ -1005,7 +1020,7 @@ paths:
         - **Files (KnowledgeSource = 0)**: PDF, DOCX, TXT, and other document formats
         
         **Process:**
-        1. For files: First upload the file via "Upload File" (POST /backend/UploadBlob)
+        1. For files: First upload the file via "Upload File" (POST /api/UploadBlob)
         2. Create a knowledge unit with file details or URL
         3. System automatically indexes the content
         4. Content becomes available for RAG queries
@@ -1109,7 +1124,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
 
-  /qna/AIKnowledge/byId/{knowledgeId}:
+  /api/AIKnowledge/byId/{knowledgeId}:
     get:
       tags: ["RAG Knowledge Indexing"]
       summary: Get Knowledge Unit by ID
@@ -1133,14 +1148,49 @@ paths:
           schema:
             type: string
           description: Unique identifier of the knowledge unit
-          example: "8778"
+          example: "8650"
       responses:
         '200':
           description: Knowledge unit details retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StandardResponse'
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 8650
+                  title:
+                    type: string
+                    example: "test2"
+                  description:
+                    type: string
+                  botId:
+                    type: integer
+                    example: 16149
+                  createdOn:
+                    type: string
+                    format: date-time
+                  modifiedOn:
+                    type: string
+                    format: date-time
+                  sourceStatus:
+                    type: integer
+                    description: Indexing status of the knowledge unit
+                    example: 1
+                  aiKnowledgeSources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        knowledgeSource:
+                          type: integer
+                          description: "0 = File, 1 = URL"
+                        content:
+                          type: string
+                          description: The URL or file reference for this source
 
   /api/AIKnowledge/{botId}/{knowledgeId}:
     delete:
