@@ -417,7 +417,7 @@ components:
           example: "ما هو الاسم الكامل لمحمد صلاح؟"
         IndexNames:
           type: array
-          description: Names of document indexes to search
+          description: "Names of document indexes to search (each matches a knowledge unit title). Required for the streaming endpoint; optional for the standard endpoint."
           items: 
             type: string
           example: ["Mohamed Salah"]
@@ -459,8 +459,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/RAGAnswerRequest'
         - type: object
+          required: [IndexNames]
           properties:
-            IsStream: 
+            IsStream:
               type: boolean
               example: true
               description: Must be true for streaming responses
