@@ -546,6 +546,7 @@ components:
 
     STTStandardForm:
       type: object
+      required: [TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -579,11 +580,12 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: Transcription model to use
-          example: "default"
+          description: "Required. Speech-to-text model. Use conformer-ar for now."
+          example: "conformer-ar"
 
     STTStreamForm:
       type: object
+      required: [TargetLanguage, ModelName]
       properties:
         Record:
           type: string
@@ -629,8 +631,8 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: Transcription model to use
-          example: "default"
+          description: "Required. Speech-to-text model. Use conformer-ar for now."
+          example: "conformer-ar"
 
     TTSStandardRequest:
       type: object
@@ -1171,6 +1173,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: >-
+            Bad Request. Returned when the knowledgeId does not exist or does not
+            belong to this bot. Note this API returns 400 here, not 404.
 
 
   /api/v1/RAG/Answer:
@@ -1463,38 +1469,25 @@ paths:
                   Response:
                     type: object
                     properties:
-                      status:
+                      AudioData:
                         type: string
-                        example: "success"
-                      audio_url:
+                        description: Base64-encoded WAV audio
+                      Metadata:
+                        type: object
+                        description: Audio format details
+                        properties:
+                          Format:
+                            type: string
+                            example: "Wav"
+                          SampleRate:
+                            type: integer
+                            example: 24000
+                          Channels:
+                            type: integer
+                            example: 1
+                      RequestId:
                         type: string
-                        format: uri
-                        description: URL to download the generated audio file
-                        example: "https://cdn.widebot.net/tmp/tts/abc123xyz/output.mp3"
-                      duration_ms:
-                        type: integer
-                        description: Audio duration in milliseconds
-                        example: 1850
-                      characters:
-                        type: integer
-                        description: Number of characters processed
-                        example: 18
-                      language:
-                        type: string
-                        description: Language used for generation
-                        example: "ar-sa"
-                      speaker:
-                        type: string
-                        description: Voice used for generation
-                        example: "Rawy"
-                      output_sr:
-                        type: integer
-                        description: Output sample rate
-                        example: 24000
-                      session_id:
-                        type: string
-                        description: Session identifier
-                        example: "tts-session-001"
+                        example: "req_6a9d7d739b18"
                   Consumption:
                     type: string
                     description: Character usage tracking
