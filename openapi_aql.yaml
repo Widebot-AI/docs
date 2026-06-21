@@ -1139,7 +1139,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/StandardResponse'
 
-  /api/AIKnowledge/byId/{botId}/{knowledgeId}:
+  /api/AIKnowledge/{botId}/{knowledgeId}:
     delete:
       tags: ["RAG Knowledge Indexing"]
       summary: Delete Knowledge Unit
