@@ -581,7 +581,10 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: "Required. STT model: v1 or v2."
+          description: |
+            Required. Speech-to-text model.
+            - **v1**: Best Arabic quality, with strong streaming. Choose this for Arabic-only audio.
+            - **v2**: Handles Arabic and English. Choose this when the audio mixes or switches between the two languages.
           enum: ["v1", "v2"]
           example: "v1"
 
@@ -633,7 +636,10 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: "Required. STT model: v1 or v2."
+          description: |
+            Required. Speech-to-text model.
+            - **v1**: Best Arabic quality, with strong streaming. Choose this for Arabic-only audio.
+            - **v2**: Handles Arabic and English. Choose this when the audio mixes or switches between the two languages.
           enum: ["v1", "v2"]
           example: "v1"
 
