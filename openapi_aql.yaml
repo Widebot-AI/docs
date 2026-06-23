@@ -561,10 +561,11 @@ components:
           enum: ["true","false"]
           example: "true"
           description: 'Set to "true" to use the default sample rate. Provide this or an explicit SampleRate; transcription fails without sample-rate information.'
-        TargetLanguage: 
+        TargetLanguage:
           type: string
-          example: "ar-eg"
-          description: Language code for transcription output
+          enum: ["en", "ar"]
+          example: "ar"
+          description: Language of the resulting text (en or ar)
         MaxRecordLengthInSeconds:
           type: string
           example: "180"
@@ -1389,11 +1390,12 @@ paths:
                 summary: Arabic audio transcription
                 description: Transcribe Arabic speech to text
                 value:
-                  SessionId: "test-session-123"
+                  SessionId: "123456"
                   SetDefaultSampleRate: "true"
-                  TargetLanguage: "ar-eg"
+                  TargetLanguage: "ar"
                   ModelName: "v1"
                   MaxRecordLengthInSeconds: "180"
+                  SampleRate: "16000"
       responses:
         '200':
           description: Transcription successful
