@@ -580,8 +580,9 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: "Required. Speech-to-text model. Use conformer-ar for now."
-          example: "conformer-ar"
+          description: "Required. STT model: v1 or v2."
+          enum: ["v1", "v2"]
+          example: "v1"
 
     STTStreamForm:
       type: object
@@ -631,8 +632,9 @@ components:
           example: "16000"
         ModelName:
           type: string
-          description: "Required. Speech-to-text model. Use conformer-ar for now."
-          example: "conformer-ar"
+          description: "Required. STT model: v1 or v2."
+          enum: ["v1", "v2"]
+          example: "v1"
 
     TTSStandardRequest:
       type: object
@@ -1390,7 +1392,7 @@ paths:
                   SessionId: "test-session-123"
                   SetDefaultSampleRate: "true"
                   TargetLanguage: "ar-eg"
-                  ModelName: "conformer-ar"
+                  ModelName: "v1"
                   MaxRecordLengthInSeconds: "180"
       responses:
         '200':
